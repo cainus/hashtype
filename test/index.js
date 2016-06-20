@@ -103,18 +103,17 @@ describe('hashtype', function(){
         {type: 'invalid value', path: 'answer', value: "42", expected: 'yellow', actual: "42"}
       ])
     });
-    // TODO
-    xit ('errors when expecting an array of numbers but getting another type of array', function(){
+    it ('errors when expecting an array of numbers but getting another type of array', function(){
       var ex = raise(function(){
         ht({
-          answer: [Number]
+          answer: ht.array({type:Number})
         }).validate({answer: ["42"]});
       });
       expect(ex).to.be.an.instanceof(TypeError)
       expect(ex.message).to.eql('invalid hash type')
       expect(ex.errors).to.eql([
-        // TODO: make undefined be Number
-        {type: 'invalid type', path: 'answer', value: "42", expected: [undefined], actual: "string"}
+        // TODO: error output kind of sucks
+        {type: 'invalid type', path: 'answer', value: ["42"], expected: 'Array', actual: "object"}
       ])
     });
     it ('errors when expecting a string matching a regex but gets another string', function(){

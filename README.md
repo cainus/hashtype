@@ -37,6 +37,9 @@ Arrays are supported 3 ways:
   arrayOfAnything: Array,
   arrayOfNumbers: Array(Number),
   arrayWithElements: [Number, String, "literal"]
+  arrayWithElementsUnordered: unordered([Number, String, "literal"])
+  arrayWithSegment: slice([Number, String, "literal"])
+
 }
 ```
 
