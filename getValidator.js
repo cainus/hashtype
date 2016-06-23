@@ -45,8 +45,8 @@ function getValidator(typeVal){
   }
 }
 
-function isWrapped(htType){
-  return ((typeof htType == 'object') && (htType.____hashtype));
+function isWrapped(lType){
+  return ((typeof lType == 'object') && (lType.____liken));
 }
 
 

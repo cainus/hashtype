@@ -1,13 +1,13 @@
-## hashtype
+## liken
 
-Hashtype is a library for declarative pattern matching and
+liken is a library for declarative pattern matching and
 validation for javascript objects.
 
 
 ### Example:
 
 ```javascript
-ht({
+liken({
   firstName: String,
   lastName: optional(String),
   age: Number

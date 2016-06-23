@@ -13,7 +13,7 @@ function raise(fn){
 }
 
 
-describe('hashtype', function(){
+describe('liken', function(){
   describe("validateAll", function(){
     it ('returns multiple errors where appropriate', function(){
       var ex = raise(function(){

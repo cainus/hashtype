@@ -32,7 +32,7 @@ const L = function(arr, options){
       this.validator = getValidator(options.type);
       this.typed = true;
     }
-    this.____hashtype = true;
+    this.____liken = true;
     this.type = "array";
     // required default is true:
     this.required = (options.required === false) ? false : true;

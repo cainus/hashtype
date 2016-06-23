@@ -1,5 +1,5 @@
 {
-  "name": "hashtype",
+  "name": "liken",
   "version": "0.0.0",
   "description": "javascript object matcher",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cainus/hashtype.git"
+    "url": "git+https://github.com/cainus/liken.git"
   },
   "keywords": [
     "schema",
@@ -22,9 +22,9 @@
   "author": "Gregg Caines",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cainus/hashtype/issues"
+    "url": "https://github.com/cainus/liken/issues"
   },
-  "homepage": "https://github.com/cainus/hashtype#readme",
+  "homepage": "https://github.com/cainus/liken#readme",
   "dependencies": {
     "chai": "3.5.0",
     "mocha": "2.5.3"

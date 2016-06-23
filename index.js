@@ -2,42 +2,42 @@ getValidator = require('./getValidator');
 array = require('./array');
 
 
-var HashType = function(schema){
-  if (this instanceof HashType) {
+var Liken = function(schema){
+  if (this instanceof Liken) {
     this.schema = schema;
     this.validator = validator(schema);
   } else {
-    return new HashType(schema);
+    return new Liken(schema);
   }
 
 };
 
-HashType.optional = function(type){
+Liken.optional = function(type){
   return {
-    ____hashtype: true,
+    ____liken: true,
     optional: true,
     type: type
   };
 }
 
-HashType.type = function(type, opts){
+Liken.type = function(type, opts){
   
 }
 
-HashType.array = function(arr, options){
+Liken.array = function(arr, options){
   return array(arr, options);
 }
 
-HashType.oneOf = function(){
+Liken.oneOf = function(){
   var args = Array.prototype.slice.call(arguments);
   return {
-    ____hashtype: true,
+    ____liken: true,
     type: "oneOf",
     choices: args
   };
 }
 
-HashType.prototype.toJsonSchema = function(){
+Liken.prototype.toJsonSchema = function(){
   props = {};
   for (var key in this.schema){
     props[key] = ht2jsonSchema(this.schema[key]);
@@ -49,62 +49,62 @@ HashType.prototype.toJsonSchema = function(){
   };
 }
 
-function ht2jsonSchema(htType){
-  console.log("htType: ", htType);
+function ht2jsonSchema(lType){
+  console.log("lType: ", lType);
   switch(true){
-    case (htType == String): return { type: 'string', required: true};
-    case (htType == Number): return {type: 'number', required: true};
-    case (htType == Boolean): return {type: 'boolean', required: true};
-    case (htType instanceof RegExp):
-      return {type: "string", pattern: htType.toString().slice(1, -1), required: true}
-    case (Array.isArray(htType)):
-      var items = ht2jsonSchema(htType[0]);
+    case (lType == String): return { type: 'string', required: true};
+    case (lType == Number): return {type: 'number', required: true};
+    case (lType == Boolean): return {type: 'boolean', required: true};
+    case (lType instanceof RegExp):
+      return {type: "string", pattern: lType.toString().slice(1, -1), required: true}
+    case (Array.isArray(lType)):
+      var items = ht2jsonSchema(lType[0]);
       delete items.required;
       return { type: 'array', requred: true, items: items };
-    case (isWrapped(htType)):
-      if (htType.type == 'oneOf'){
-        var enumVal = htType.choices.map(function(choice){
+    case (isWrapped(lType)):
+      if (lType.type == 'oneOf'){
+        var enumVal = lType.choices.map(function(choice){
           var retval = ht2jsonSchema(choice);
           delete retval.required;
           return retval;
         });
         var retval = { 'enum': enumVal, required: true };
       } else {
-        var retval = ht2jsonSchema(htType.type);
+        var retval = ht2jsonSchema(lType.type);
       }
-      if (htType.optional){
+      if (lType.optional){
         retval.required = false;
       }
       return retval;
-    case (['string', 'number', 'boolean'].indexOf(typeof htType) !== -1):
-      return {enum: [htType], required: true};
-    default: throw new Error('unsupported jsonschema type: ' + htType);
+    case (['string', 'number', 'boolean'].indexOf(typeof lType) !== -1):
+      return {enum: [lType], required: true};
+    default: throw new Error('unsupported jsonschema type: ' + lType);
   }
 
 }
 
-function isWrapped(htType){
-  return ((typeof htType == 'object') && (htType.____hashtype));
+function isWrapped(lType){
+  return ((typeof lType == 'object') && (lType.____liken));
 }
 
-function isOptional(htType){
-  if (isWrapped(htType)){
-    return !!htType.optional;
+function isOptional(lType){
+  if (isWrapped(lType)){
+    return !!lType.optional;
   }
   return false;
 }
 
 // returns as many errors as possible
-HashType.prototype.validateAll = function(hash){
+Liken.prototype.validateAll = function(hash){
   return this.validator(hash, false);
 }
 
 // bails on the first error
-HashType.prototype.validate = function(hash){
+Liken.prototype.validate = function(hash){
   return this.validator(hash, true);
 }
 
-module.exports = HashType;
+module.exports = Liken;
 
 function throwError(errors){
   if (!Array.isArray(errors)){
