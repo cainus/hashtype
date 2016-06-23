@@ -1,5 +1,7 @@
 ## liken
 
+** liken is experimental only **
+
 liken is a library for declarative pattern matching and
 validation for javascript objects.
 
