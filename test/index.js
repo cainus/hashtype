@@ -13,7 +13,7 @@ function raise(fn){
 }
 
 
-describe('liken', function(){
+describe('liken (index.js)', function(){
   describe("validateAll", function(){
     it ('returns multiple errors where appropriate', function(){
       var ex = raise(function(){
@@ -23,10 +23,10 @@ describe('liken', function(){
         }).validateAll({firstName: 42, answer: "Test"});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid type', path: 'firstName', value: 42, expected: 'String', actual: 'number'},
-        {type: 'invalid type', path: 'answer', value: "Test", expected: 'Number', actual: 'string'},
+        {subType: 'invalid type', path: 'firstName', value: 42, expectedType: 'String', actualType: 'number'},
+        {subType: 'invalid type', path: 'answer', value: "Test", expectedType: 'Number', actualType: 'string'},
       ])
     });
   });
@@ -38,9 +38,9 @@ describe('liken', function(){
         }).validate({});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'missing property', path: 'firstName', value: null, expected: 'String', actual: null}
+        {subType: 'missing value', path: 'firstName', expected: 'String'}
       ])
     });
     it ('errors when expecting a string but getting another type', function(){
@@ -50,9 +50,9 @@ describe('liken', function(){
         }).validate({firstName: 1234});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid type', path: 'firstName', value: 1234, expected: 'String', actual: 'number'}
+        {subType: 'invalid type', path: 'firstName', value: 1234, expectedType: 'String', actualType: 'number'}
       ])
     });
     it ('errors when expecting a number but getting another type', function(){
@@ -62,9 +62,9 @@ describe('liken', function(){
         }).validate({answer: "42"});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid type', path: 'answer', value: "42", expected: 'Number', actual: 'string'}
+        {subType: 'invalid type', path: 'answer', value: "42", expectedType: 'Number', actualType: 'string'}
       ])
     });
     it ('errors when expecting an array but get another type', function(){
@@ -74,9 +74,9 @@ describe('liken', function(){
         }).validate({answers: "42"});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid type', path: 'answers', value: "42", expected: 'Array', actual: 'string'}
+        {subType: 'invalid type', path: 'answers', value: "42", expectedType: 'Array', actualType: 'string'}
       ])
     });
     it ('errors when expecting a oneOf but get another type', function(){
@@ -86,9 +86,9 @@ describe('liken', function(){
         }).validate({answers: true});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid type', path: 'answers', value: true, expected: 'oneOf', actual: 'boolean'}
+        {subType: 'invalid type', path: 'answers', value: true, expectedType: 'oneOf', actualType: 'boolean'}
       ])
     });
     it ('errors when expecting a string literal but getting another type', function(){
@@ -98,9 +98,9 @@ describe('liken', function(){
         }).validate({answer: "42"});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid value', path: 'answer', value: "42", expected: 'yellow', actual: "42"}
+        {subType: 'invalid value', path: 'answer', expected: 'yellow', actual: "42"}
       ])
     });
     it ('errors when expecting an array of numbers but getting another type of array', function(){
@@ -110,10 +110,10 @@ describe('liken', function(){
         }).validate({answer: ["42"]});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
         // TODO: error output kind of sucks
-        {type: 'invalid type', path: 'answer', value: ["42"], expected: 'Array', actual: "object"}
+        {subType: 'invalid type', path: 'answer', value: ["42"], expectedType: 'Array', actualType: "object"}
       ])
     });
     it ('errors when expecting a string matching a regex but gets another string', function(){
@@ -123,9 +123,9 @@ describe('liken', function(){
         }).validate({answer: "42"});
       });
       expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid hash type')
+      expect(ex.message).to.eql('invalid type')
       expect(ex.errors).to.eql([
-        {type: 'invalid value', path: 'answer', value: "42", expected: /^[a-z]+$/, actual: "42"}
+        {subType: 'invalid value', path: 'answer', expected: /^[a-z]+$/, actual: "42"}
       ])
     });
     it ('returns true when matching', function(){

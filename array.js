@@ -1,5 +1,5 @@
 
-const getValidator = require('./getValidator');
+const validators = require('./validators');
 
 /*
  * options are:
@@ -29,7 +29,7 @@ const L = function(arr, options){
     this.typed = false;
     if (options.type){
       this.dataType = options.type;
-      this.validator = getValidator(options.type);
+      this.validator = validators.all(options.type);
       this.typed = true;
     }
     this.____liken = true;
