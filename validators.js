@@ -48,7 +48,8 @@ validators.all = function(typeVal){
             if (val == null) return;
             return test(val);
           }
-          break;
+        default:
+          throw new Error("wrapped type unknown");
       }
     case (isObject(typeVal)):
       return objectFailTest(typeVal);
@@ -136,7 +137,6 @@ function literalFailTest(expected){
 function arrayFailTest(schema){
   //console.log("called arrayFailTest() with ", schema);
   return function(vals, key){
-    var errors = [];
     if (!vals){
       return error.missingValue(key, schema);
     }
@@ -154,20 +154,20 @@ function arrayFailTest(schema){
       var val = vals[i];
       var itemKey = key.concat(i);
       if (schema[i] == null){
-        var itemError = error.excessValue(itemKey, val);
-        err.errors.push(itemError);
+        var firstItemError = error.excessValue(itemKey, val);
+        err.errors.push(firstItemError);
         break;
       }
       // any unfulfilled schema items are errors too
       if (val == null){
-        var itemError = error.missingValue(itemKey, schema[i]);
-        err.errors.push(itemError);
+        var secondItemError = error.missingValue(itemKey, schema[i]);
+        err.errors.push(secondItemError);
         break;
       }
       var failTest = validators.all(schema[i]);
-      var itemError = failTest(val, itemKey);
-      if (itemError){
-        err.errors.push(itemError);
+      var thirdItemError = failTest(val, itemKey);
+      if (thirdItemError){
+        err.errors.push(thirdItemError);
       }
     }
     if (err.errors.length > 0){
@@ -192,7 +192,7 @@ function booleanFailTest(val, key){
   if (!(typeof val === 'boolean' || val instanceof Boolean)){
     return error.invalidType(key, 'Boolean', val);
   }
-};
+}
 
 function arrayPrototypeFailTest(val, key){
   if (val == null){
@@ -201,7 +201,7 @@ function arrayPrototypeFailTest(val, key){
   if (!Array.isArray(val)){
     return error.invalidType(key, 'Array', val);
   }
-};
+}
 
 function stringFailTest(val, key){
   if (val == null){
@@ -210,7 +210,7 @@ function stringFailTest(val, key){
   if (!isString(val)){
     return error.invalidType(key, 'String', val);
   }
-};
+}
 
 
 
@@ -234,7 +234,7 @@ const O = function(obj, options){
           throw new Error('first parameter must be an array or options object');
       }
     }
-    console.log("specified: ", this.specified);
+    //console.log("specified: ", this.specified);
     options = options || {};
     this.input = obj;
     this.____liken = true;
@@ -257,13 +257,13 @@ const O = function(obj, options){
 
 O.prototype.test = function(input){
   var testretval = this.validate(input);
-  console.log("testretval: ", testretval);
+  //console.log("testretval: ", testretval);
   return testretval;
 };
 
 // takes a schema and returns a function that can be used to validate it.
 function objectValidator(schema){
-  propValidators = {};
+  const propValidators = {};
   //console.log("Schema: ", schema);
   for (var key in schema){
     var value = schema[key];
@@ -271,16 +271,18 @@ function objectValidator(schema){
     propValidators[key] = type2Validator(value, key);
   }
   return function(obj, shouldBail){
-    console.log("checking isObj");
+    //console.log("checking isObj");
     if (!isObject(obj)){
       return error.invalidType(null, 'object', obj, schema);
     }
-    console.log("passed isObj");
+    //console.log("passed isObj");
     var errors = [];
+    var tested = [];
     for(key in propValidators){
       var v = propValidators[key];
       var value = obj[v.path];
       var path = v.path;
+      tested.push(v.path)
       var err = v.test(value, path);
       if (err){
         if (Array.isArray(err)){
@@ -292,6 +294,13 @@ function objectValidator(schema){
           throwError(errors);
         }
       }
+    }
+    // all the keys outside the schema are excessValue errors
+    for(key in obj){
+      if (tested.indexOf(key) !== -1){
+        continue;
+      }
+      errors.push(error.excessValue(key, obj[key]))
     }
     if (errors.length !== 0){
       throwError(errors);
@@ -323,7 +332,7 @@ function objectFailTest(schema){
       return error.missingValue(key, schema);
     }
     var retval = tester.test(vals);
-    console.log("retval: ", retval);
+    // console.log("retval: ", retval);
     return retval
   }
 }

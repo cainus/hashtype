@@ -1,4 +1,7 @@
-test:
-	node_modules/.bin/mocha test
+lint:
+	./node_modules/.bin/eslint .
 
-.PHONY: test
+test: lint
+	./node_modules/.bin/mocha test
+
+.PHONY: test lint

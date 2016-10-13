@@ -5,7 +5,7 @@ var isObject = require('../isObject');
 describe('isObject', function(){
 
   it ("returns false for various non-objects", function(){
-    failCases = {
+    const failCases = {
       array: [],
       string: "asdf",
       number: 1234,

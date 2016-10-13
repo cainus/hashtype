@@ -50,6 +50,7 @@ const L = function(arr, options){
 // features? minLength, maxLength, length, any, all, some
 
 L.prototype.test = function(input){
+  let i = 0;
   if (!Array.isArray(input)){
     throw new Error('not an array');
   }
@@ -60,7 +61,7 @@ L.prototype.test = function(input){
     if (!this.ordered){
       input = input.sort();
     }
-    for(var i = 0; i < input.length; i++){
+    for(i = 0; i < input.length; i++){
       if (input[i] !== this.input[i]){
         throw new Error('non-match');
       }
@@ -68,9 +69,8 @@ L.prototype.test = function(input){
   } else {
     // unspecified
     if (this.typed){
-      for(var i = 0; i < input.length; i++){
+      for(i = 0; i < input.length; i++){
         var err = this.validator(input[i]);
-        console.log("err", err);
         if (err){
           throw err;
         }

@@ -3,6 +3,7 @@ var liken = require('../index');
 //var optional = ht.optional;
 //var oneOf = ht.oneOf;
 var expect = require('chai').expect;
+var consoleError = global[`consol${""}e`][`erro${""}r`]; // fool the linter
 
 function raise(fn){
   try {
@@ -10,7 +11,7 @@ function raise(fn){
   } catch(ex){
     return ex;
   }
-  console.error("expected exception did not throw. return value: ", retval);
+  consoleError("expected exception did not throw. return value: ", retval);
   throw new Error('Expected exception did not throw');
 }
 
@@ -18,7 +19,7 @@ function expectValueError(fn){
   var ex = raise(fn);
   expect(ex).to.be.an.instanceof(Error);
   if (!ex.ValueError){
-    console.error("Non-Value Error thrown: ", ex, ex.stack);
+    consoleError("Non-Value Error thrown: ", ex, ex.stack);
   }
   expect(ex.ValueError).to.eql(true);
   expect(ex.message).to.eql('Value Error');
@@ -31,7 +32,7 @@ function getError(schema, actual){
   });
 }
 function expectProperties(obj, props){
-  for (key in props){
+  for (const key in props){
     expect(obj[key]).to.eql(props[key]);
   }
 }

@@ -1,5 +1,18 @@
-validators = require('./validators');
-array = require('./array');
+/*
+
+ PLAN:
+
+ for now, just make throw work.  returning false is easy later.
+ for now, try to return all errors validating.  bailing is easy later.
+ for now, literals are more interesting.  replace assertObjectEquals() usage,
+   then we can make it more dynamic.
+
+*/
+
+
+
+const validators = require('./validators');
+const array = require('./array');
 
 
 var Liken = function(schema){
@@ -21,9 +34,10 @@ Liken.optional = function(type){
   };
 }
 
+/*
 Liken.type = function(type, opts){
   
-}
+}*/
 
 Liken.array = function(arr, options){
   return array(arr, options);
@@ -45,12 +59,13 @@ function isWrapped(lType){
   return ((typeof lType == 'object') && (lType.____liken));
 }
 
+/*
 function isOptional(lType){
   if (isWrapped(lType)){
     return !!lType.optional;
   }
   return false;
-}
+}*/
 
 // returns as many errors as possible
 Liken.prototype.validateAll = function(hash){
@@ -65,7 +80,7 @@ Liken.prototype.to = function(input){
   }
   var err = new Error("Value Error");
   err.ValueError = true;
-  for (key in result){
+  for (const key in result){
     err[key] = result[key];
   }
   throw err;
@@ -78,6 +93,8 @@ Liken.prototype.validate = function(hash){
 
 module.exports = Liken;
 
+/* old code? delete?
+ *
 function throwError(errors){
   if (!Array.isArray(errors)){
     errors = [errors]
@@ -85,12 +102,14 @@ function throwError(errors){
   var err = new TypeError('invalid type')
   err.errors = errors;
   throw err;
-}
+}*/
 
 // takes a schema and returns a function that can be used to validate it.
 function validator(schema){
-  propValidators = {};
   return validators.all(schema);
+
+  /* old code below?  deletable?
+  const propValidators = {};
 
   //console.log("Schema: ", schema);
   for (var key in schema){
@@ -100,7 +119,7 @@ function validator(schema){
   }
   return function(obj, shouldBail){
     var errors = [];
-    for(key in propValidators){
+    for(const key in propValidators){
       var v = propValidators[key];
       var value = obj[v.path];
       var path = v.path;
@@ -122,16 +141,19 @@ function validator(schema){
     return true;
   }
 
+  */
 }
 
+/* old code? delete?
 function type2Validator(value, key){
   return {path: key, test: validators.all(value)};
-}
+  }
+  */
 
 
 // JSONSchema stuff
 Liken.prototype.toJsonSchema = function(){
-  props = {};
+  const props = {};
   for (var key in this.schema){
     props[key] = ht2jsonSchema(this.schema[key]);
   }
@@ -145,6 +167,7 @@ Liken.prototype.toJsonSchema = function(){
 
 function ht2jsonSchema(lType){
   //console.log("lType: ", lType);
+  let retval = null;
   switch(true){
     case (lType == String): return { type: 'string', required: true};
     case (lType == Number): return {type: 'number', required: true};
@@ -158,13 +181,13 @@ function ht2jsonSchema(lType){
     case (isWrapped(lType)):
       if (lType.type == 'oneOf'){
         var enumVal = lType.choices.map(function(choice){
-          var retval = ht2jsonSchema(choice);
+          retval = ht2jsonSchema(choice);
           delete retval.required;
           return retval;
         });
-        var retval = { 'enum': enumVal, required: true };
+        retval = { 'enum': enumVal, required: true };
       } else {
-        var retval = ht2jsonSchema(lType.type);
+        retval = ht2jsonSchema(lType.type);
       }
       if (lType.optional){
         retval.required = false;

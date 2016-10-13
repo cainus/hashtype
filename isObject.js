@@ -24,7 +24,7 @@ function isObject(obj) {
     return false;
   }
   return true;
-};
+}
 
 
 

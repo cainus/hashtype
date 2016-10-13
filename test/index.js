@@ -1,7 +1,8 @@
-var ht = require('../index');
-var optional = ht.optional;
-var oneOf = ht.oneOf;
+const liken = require('../index');
+var optional = liken.optional;
+var oneOf = liken.oneOf;
 var expect = require('chai').expect;
+// TODO what about default values?!?
 
 function raise(fn){
   try {
@@ -17,7 +18,7 @@ describe('liken (index.js)', function(){
   describe("validateAll", function(){
     it ('returns multiple errors where appropriate', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           firstName: String,
           answer: Number
         }).validateAll({firstName: 42, answer: "Test"});
@@ -27,13 +28,13 @@ describe('liken (index.js)', function(){
       expect(ex.errors).to.eql([
         {subType: 'invalid type', path: 'firstName', value: 42, expectedType: 'String', actualType: 'number'},
         {subType: 'invalid type', path: 'answer', value: "Test", expectedType: 'Number', actualType: 'string'},
-      ])
+      ]);
     });
   });
   describe("validate", function(){
     it ('errors when missing expected strings', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           firstName: String
         }).validate({});
       });
@@ -45,7 +46,7 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting a string but getting another type', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           firstName: String
         }).validate({firstName: 1234});
       });
@@ -57,7 +58,7 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting a number but getting another type', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           answer: Number
         }).validate({answer: "42"});
       });
@@ -69,7 +70,7 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting an array but get another type', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           answers: Array
         }).validate({answers: "42"});
       });
@@ -81,7 +82,7 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting a oneOf but get another type', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           answers: oneOf(String, Number)
         }).validate({answers: true});
       });
@@ -93,7 +94,7 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting a string literal but getting another type', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           answer: "yellow"
         }).validate({answer: "42"});
       });
@@ -105,8 +106,8 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting an array of numbers but getting another type of array', function(){
       var ex = raise(function(){
-        ht({
-          answer: ht.array({type:Number})
+        liken({
+          answer: liken.array({type:Number})
         }).validate({answer: ["42"]});
       });
       expect(ex).to.be.an.instanceof(TypeError)
@@ -118,7 +119,7 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting a string matching a regex but gets another string', function(){
       var ex = raise(function(){
-        ht({
+        liken({
           answer: /^[a-z]+$/
         }).validate({answer: "42"});
       });
@@ -128,9 +129,10 @@ describe('liken (index.js)', function(){
         {subType: 'invalid value', path: 'answer', expected: /^[a-z]+$/, actual: "42"}
       ])
     });
-    it ('returns true when matching', function(){
+    // TODO dynamic objects
+    xit ('returns true when matching', function(){
       expect(
-        ht({
+        liken({
           firstName: String,
           fingerCount: Number,
           employed: Boolean,
@@ -151,9 +153,10 @@ describe('liken (index.js)', function(){
         })
       ).to.eql(true);
     });
-    it ('returns true when an optional parameter is missing', function(){
+    // TODO later.  this gets us option hash param validation
+    xit ('returns true when an optional parameter is missing', function(){
       expect(
-        ht({
+        liken({
           firstName: String,
           lastName: optional(String),
           fingerCount: optional(Number),
@@ -168,10 +171,12 @@ describe('liken (index.js)', function(){
       ).to.eql(true);
     });
   });
-  describe("extended types", function(){
+  // TODO later, for adding additional types (mongoid?!)
+  // TODO maybe these should be wrapped with an extended() for easier identification?
+  xdescribe("extended types", function(){
     it ('returns true when matching', function(){
       expect(
-        ht({
+        liken({
           firstName: function(val){ return /^[a-zA-Z]+$/.test(val); },
           lastName: optional(function(val){ return /^[a-zA-Z]+$/.test(val); }),
         }).validate({
@@ -180,9 +185,10 @@ describe('liken (index.js)', function(){
       ).to.eql(true);
     });
   });
-  describe("#toJsonSchema", function(){
+  // TODO later
+  xdescribe("#toJsonSchema", function(){
     it ("works", function(){
-      expect(ht({
+      expect(liken({
         firstName: String,
         lastName: optional(String),
         fingerCount: Number,
@@ -232,7 +238,7 @@ describe('liken (index.js)', function(){
   });
   it("fails for the function type", function(){
     var ex = raise(function(){
-      ht({
+      liken({
         someFn: function(){}
       }).toJsonSchema()
     });
