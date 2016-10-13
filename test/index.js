@@ -10,7 +10,7 @@ function raise(fn){
   } catch(ex){
     return ex;
   }
-  throw new Error('Expected exception did not throw')
+  throw new Error('Expected exception did not throw');
 }
 
 
@@ -23,8 +23,8 @@ describe('liken (index.js)', function(){
           answer: Number
         }).validateAll({firstName: 42, answer: "Test"});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid type', path: 'firstName', value: 42, expectedType: 'String', actualType: 'number'},
         {subType: 'invalid type', path: 'answer', value: "Test", expectedType: 'Number', actualType: 'string'},
@@ -38,11 +38,11 @@ describe('liken (index.js)', function(){
           firstName: String
         }).validate({});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'missing value', path: 'firstName', expected: 'String'}
-      ])
+      ]);
     });
     it ('errors when expecting a string but getting another type', function(){
       var ex = raise(function(){
@@ -50,11 +50,11 @@ describe('liken (index.js)', function(){
           firstName: String
         }).validate({firstName: 1234});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid type', path: 'firstName', value: 1234, expectedType: 'String', actualType: 'number'}
-      ])
+      ]);
     });
     it ('errors when expecting a number but getting another type', function(){
       var ex = raise(function(){
@@ -62,11 +62,11 @@ describe('liken (index.js)', function(){
           answer: Number
         }).validate({answer: "42"});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid type', path: 'answer', value: "42", expectedType: 'Number', actualType: 'string'}
-      ])
+      ]);
     });
     it ('errors when expecting an array but get another type', function(){
       var ex = raise(function(){
@@ -74,11 +74,11 @@ describe('liken (index.js)', function(){
           answers: Array
         }).validate({answers: "42"});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid type', path: 'answers', value: "42", expectedType: 'Array', actualType: 'string'}
-      ])
+      ]);
     });
     it ('errors when expecting a oneOf but get another type', function(){
       var ex = raise(function(){
@@ -86,11 +86,11 @@ describe('liken (index.js)', function(){
           answers: oneOf(String, Number)
         }).validate({answers: true});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid type', path: 'answers', value: true, expectedType: 'oneOf', actualType: 'boolean'}
-      ])
+      ]);
     });
     it ('errors when expecting a string literal but getting another type', function(){
       var ex = raise(function(){
@@ -98,11 +98,11 @@ describe('liken (index.js)', function(){
           answer: "yellow"
         }).validate({answer: "42"});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid value', path: 'answer', expected: 'yellow', actual: "42"}
-      ])
+      ]);
     });
     it ('errors when expecting an array of numbers but getting another type of array', function(){
       var ex = raise(function(){
@@ -110,12 +110,12 @@ describe('liken (index.js)', function(){
           answer: liken.array({type:Number})
         }).validate({answer: ["42"]});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         // TODO: error output kind of sucks
         {subType: 'invalid type', path: 'answer', value: ["42"], expectedType: 'Array', actualType: "object"}
-      ])
+      ]);
     });
     it ('errors when expecting a string matching a regex but gets another string', function(){
       var ex = raise(function(){
@@ -123,11 +123,11 @@ describe('liken (index.js)', function(){
           answer: /^[a-z]+$/
         }).validate({answer: "42"});
       });
-      expect(ex).to.be.an.instanceof(TypeError)
-      expect(ex.message).to.eql('invalid type')
+      expect(ex).to.be.an.instanceof(TypeError);
+      expect(ex.message).to.eql('invalid type');
       expect(ex.errors).to.eql([
         {subType: 'invalid value', path: 'answer', expected: /^[a-z]+$/, actual: "42"}
-      ])
+      ]);
     });
     // TODO dynamic objects
     xit ('returns true when matching', function(){
@@ -233,14 +233,14 @@ describe('liken (index.js)', function(){
           }
         },
         allowAdditionalProperties: false
-      })
+      });
     });
   });
   it("fails for the function type", function(){
     var ex = raise(function(){
       liken({
         someFn: function(){}
-      }).toJsonSchema()
+      }).toJsonSchema();
     });
     expect(ex).to.be.an.instanceof(Error);
     expect(ex.message).to.eql('unsupported jsonschema type: function (){}');

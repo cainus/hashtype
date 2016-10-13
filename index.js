@@ -32,7 +32,7 @@ Liken.optional = function(type){
     optional: true,
     type: type
   };
-}
+};
 
 /*
 Liken.type = function(type, opts){
@@ -41,7 +41,7 @@ Liken.type = function(type, opts){
 
 Liken.array = function(arr, options){
   return array(arr, options);
-}
+};
 
 Liken.oneOf = function(){
   var args = Array.prototype.slice.call(arguments);
@@ -50,7 +50,7 @@ Liken.oneOf = function(){
     type: "oneOf",
     choices: args
   };
-}
+};
 
 Liken.liken = Liken;
 
@@ -70,7 +70,7 @@ function isOptional(lType){
 // returns as many errors as possible
 Liken.prototype.validateAll = function(hash){
   return this.validator(hash, false);
-}
+};
 
 // TODO: flatten this error?!?
 Liken.prototype.to = function(input){
@@ -84,12 +84,12 @@ Liken.prototype.to = function(input){
     err[key] = result[key];
   }
   throw err;
-}
+};
 
 // bails on the first error
 Liken.prototype.validate = function(hash){
   return this.validator(hash, true);
-}
+};
 
 module.exports = Liken;
 
@@ -162,7 +162,7 @@ Liken.prototype.toJsonSchema = function(){
     properties: props,
     allowAdditionalProperties: false
   };
-}
+};
 
 
 function ht2jsonSchema(lType){
@@ -173,7 +173,7 @@ function ht2jsonSchema(lType){
     case (lType == Number): return {type: 'number', required: true};
     case (lType == Boolean): return {type: 'boolean', required: true};
     case (lType instanceof RegExp):
-      return {type: "string", pattern: lType.toString().slice(1, -1), required: true}
+      return {type: "string", pattern: lType.toString().slice(1, -1), required: true};
     case (Array.isArray(lType)):
       var items = ht2jsonSchema(lType[0]);
       delete items.required;

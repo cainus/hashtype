@@ -47,7 +47,7 @@ validators.all = function(typeVal){
           return function(val){
             if (val == null) return;
             return test(val);
-          }
+          };
         default:
           throw new Error("wrapped type unknown");
       }
@@ -57,7 +57,7 @@ validators.all = function(typeVal){
       //console.log("typeVal: ", typeVal);
       throw new Error('unknown schema type: ' + typeVal);
   }
-}
+};
 
 function isWrapped(lType){
   return ((typeof lType == 'object') && (lType.____liken));
@@ -146,7 +146,7 @@ function arrayFailTest(schema){
     //console.log("schema iz: ", schema);
     var err = error.invalidValue(key, schema, vals);
     if (!key){
-      key = []
+      key = [];
     }
     err.errors = [];
     var longestLength = Math.max(vals.length, schema.length);
@@ -213,128 +213,19 @@ function stringFailTest(val, key){
 }
 
 
-
-// ------------------------------
-// object validator
-// ------------------------------
-const O = function(obj, options){
-  if (this instanceof O) {
-    this.specified = true;  // an actual object for matching has been provided,
-                            // rather than allowing any object
-    if (!obj || !isObject(obj)){
-      this.specified = false;
-      switch(true){
-        case (obj == null):
-          break;
-        case (obj.required != null):
-          // detected an options object as first param
-          options = obj;
-          break;
-        default:
-          throw new Error('first parameter must be an array or options object');
-      }
-    }
-    //console.log("specified: ", this.specified);
-    options = options || {};
-    this.input = obj;
-    this.____liken = true;
-    this.type = "object";
-    // required default is true:
-    this.required = (options.required === false) ? false : true;
-    if (this.specified){
-      this.validate = objectValidator(obj);
-    } else {
-      this.validate = function(o){
-        return isObject(o);
-      };
-    }
-  } else {
-    return new O(obj, options);
-  }
-};
-
-// TODO allow additional attributes?
-
-O.prototype.test = function(input){
-  var testretval = this.validate(input);
-  //console.log("testretval: ", testretval);
-  return testretval;
-};
-
-// takes a schema and returns a function that can be used to validate it.
-function objectValidator(schema){
-  const propValidators = {};
-  //console.log("Schema: ", schema);
-  for (var key in schema){
-    var value = schema[key];
-    //console.log("value: ", value, "key: ", key, value.prototype, String.prototype, value.prototype == String.prototype);
-    propValidators[key] = type2Validator(value, key);
-  }
-  return function(obj, shouldBail){
-    //console.log("checking isObj");
-    if (!isObject(obj)){
-      return error.invalidType(null, 'object', obj, schema);
-    }
-    //console.log("passed isObj");
-    var errors = [];
-    var tested = [];
-    for(key in propValidators){
-      var v = propValidators[key];
-      var value = obj[v.path];
-      var path = v.path;
-      tested.push(v.path)
-      var err = v.test(value, path);
-      if (err){
-        if (Array.isArray(err)){
-          errors = errors.concat(err);
-        } else {
-          errors.push(err);
-        }
-        if (shouldBail){
-          throwError(errors);
-        }
-      }
-    }
-    // all the keys outside the schema are excessValue errors
-    for(key in obj){
-      if (tested.indexOf(key) !== -1){
-        continue;
-      }
-      errors.push(error.excessValue(key, obj[key]))
-    }
-    if (errors.length !== 0){
-      throwError(errors);
-    }
-  }
-
-}
-
-function throwError(errors){
-  if (!Array.isArray(errors)){
-    errors = [errors]
-  }
-  var err = new TypeError('invalid type')
-  err.errors = errors;
-  throw err;
-}
-
-function type2Validator(value, key){
-  return {path: key, test: validators.all(value)};
-}
-
-
+const O = require('./object');
 validators.object = O;
 
 function objectFailTest(schema){
-  var tester = O(schema)
+  var tester = O(schema);
   return function(vals, key){
     if (vals == null){
       return error.missingValue(key, schema);
     }
     var retval = tester.test(vals);
     // console.log("retval: ", retval);
-    return retval
-  }
+    return retval;
+  };
 }
 
 // -------------------------------------------------

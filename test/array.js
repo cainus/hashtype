@@ -7,7 +7,7 @@ function raise(fn){
   } catch(ex){
     return ex;
   }
-  throw new Error('Expected exception did not throw')
+  throw new Error('Expected exception did not throw');
 }
 
 describe("array", function(){
@@ -40,7 +40,7 @@ describe("array", function(){
     // TODO later when arrays can be assigned types
     xit ('fails on array of numbers when there is a string', function(){
       expect(raise(function(){
-        L({type:Number}).test([1,"three",2])
+        L({type:Number}).test([1,"three",2]);
       }).type).to.eql('invalid type');
     });
     it ('passes on array of literals (unsorted)', function(){
@@ -50,17 +50,17 @@ describe("array", function(){
     });
     it ('fails on array of literals (bad order)', function(){
       expect(raise(function(){
-        L([1,2,"three"]).test([1,"three",2])
+        L([1,2,"three"]).test([1,"three",2]);
       }).message).to.eql('non-match');
     });
     it ('fails an incorrect array of literals', function(){
       expect(raise(function(){
-        L([1,2,"three"]).test([1,2,3])
+        L([1,2,"three"]).test([1,2,3]);
       }).message).to.eql('non-match');
     });
     it ('fails an incorrect array of literals that is a subset', function(){
       expect(raise(function(){
-        L([1,2,"three"]).test([1,2])
+        L([1,2,"three"]).test([1,2]);
       }).message).to.eql('non-match');
     });
   });

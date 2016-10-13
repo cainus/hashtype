@@ -1,7 +1,7 @@
 
 // pretty incomplete, but good enough for now
 function isObject(obj) {
-  if (!obj){
+  if (obj == null){
     return false;
   }
   var type = typeof obj;

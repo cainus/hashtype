@@ -16,8 +16,12 @@ describe('isObject', function(){
       'function': function(){},
       boolean: true,
       booleanObject: new Boolean(true),
-      stringObj: new String("asdf")
-    }
+      stringObj: new String("asdf"),
+      emptyString: "",
+      aNull: null,
+      anUndefined: undefined,
+      aFalse: false,
+    };
 
 
     for (var name in failCases){
