@@ -1,59 +1,12 @@
 var liken = require('../index');
+const testHelpers = require('../testHelpers');
 
-//var optional = ht.optional;
-//var oneOf = ht.oneOf;
-var expect = require('chai').expect;
-var consoleError = global[`consol${""}e`][`erro${""}r`]; // fool the linter
-
-function raise(fn){
-  try {
-    var retval = fn();
-  } catch(ex){
-    return ex;
-  }
-  consoleError("expected exception did not throw. return value: ", retval);
-  throw new Error('Expected exception did not throw');
-}
-
-function expectValueError(fn){
-  var ex = raise(fn);
-  expect(ex).to.be.an.instanceof(Error);
-  if (!ex.ValueError){
-    consoleError("Non-Value Error thrown: ", ex, ex.stack);
-  }
-  expect(ex.ValueError).to.eql(true);
-  expect(ex.message).to.eql('Value Error');
-  return ex;
-}
-
-function getError(schema, actual){
-  return expectValueError(function(){
-    liken(schema).to(actual);
-  });
-}
-function expectProperties(obj, props){
-  for (const key in props){
-    expect(obj[key]).to.eql(props[key]);
-  }
-}
-function expectMissingParamToThrow(schema){
-  var error = getError(schema);
-  expectProperties(error, {
-    subType: 'missing value', path: null, expected: schema
-  });
-}
-function expectValueMismatchToThrow(schema, wrongType){
-  var error = getError(schema, wrongType);
-  expectProperties(error, {
-    subType: 'invalid value', path: null, expected: schema, actual: wrongType
-  });
-}
-function expectTypeMismatchToThrow(schema, wrongVal, expectedType, actualType){
-  var error = getError(schema, wrongVal);
-  expectProperties(error, {
-    subType: 'invalid type', path: null, value: wrongVal, expectedValue: schema, expectedType: expectedType, actualType: actualType
-  });
-}
+const expect = testHelpers.expect;
+const expectValueMismatchToThrow = testHelpers.expectValueMismatchToThrow;
+const expectMissingParamToThrow = testHelpers.expectMissingParamToThrow;
+const expectTypeMismatchToThrow = testHelpers.expectTypeMismatchToThrow;
+const expectProperties = testHelpers.expectProperties;
+const getError = testHelpers.getError;
 
 function testLiteral(val, unmatched, wrongType, expectedType, actualType){
   it ('throws error on unmatched value', function(){
@@ -111,41 +64,5 @@ describe('liken literals', function(){
         subType: 'missing value', path: [0], expected: "asdf"
       });
     });
-  });
-  describe("objects of literals", function(){
-    it('throws error on wrong type', function(){
-      expectTypeMismatchToThrow({}, 'asdf', 'object', 'string');
-    });
-    it ('throws missing error on null', function(){
-      expectMissingParamToThrow({});
-    });
-    it ('allows matching empty values', function(){
-      liken({}).to({});
-    });
-    it ('allows matching values', function(){
-      liken({asdf:"asdf"}).to({asdf:"asdf"});
-    });
-    it ('errors for excess items', function(){
-      var error = getError({}, {"key":"value"});
-      //console.log("error: ", error);
-      expectProperties(error, {
-        subType: 'invalid value', path: null, expected: {}, actual: {"key":"value"}
-      });
-      expect(error.errors).to.have.length(1);
-      expectProperties(error.errors[0], {
-        subType: 'excess value', path: ["key"], actual: "value"
-      });
-    });
-    it ('errors for missing items', function(){
-      var error = getError({"key":"value"}, {});
-      expectProperties(error, {
-        subType: 'invalid value', path: null, expected: {"key":"value"}, actual: {}
-      });
-      expect(error.errors).to.have.length(1);
-      expectProperties(error.errors[0], {
-        subType: 'missing value', path: ["key"], expected: "value"
-      });
-    });
-
   });
 });

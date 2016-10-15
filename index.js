@@ -78,7 +78,7 @@ Liken.prototype.to = function(input){
   if (!result){
     return;
   }
-  var err = new Error("Value Error");
+  var err = new TypeError("Value Error");
   err.ValueError = true;
   for (const key in result){
     err[key] = result[key];

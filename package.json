@@ -27,7 +27,12 @@
   "homepage": "https://github.com/cainus/liken#readme",
   "dependencies": {
     "chai": "3.5.0",
+    "deep-equal": "1.0.1",
+    "difflet": "1.0.1",
     "eslint": "3.7.1",
-    "mocha": "2.5.3"
+    "json-stable-stringify": "1.0.1",
+    "lodash": "4.16.4",
+    "mocha": "2.5.3",
+    "traverse": "0.6.6"
   }
 }

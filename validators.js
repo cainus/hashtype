@@ -4,32 +4,37 @@ var isObject = require('./isObject');
 var validators = {};
 
 validators.all = function(typeVal){
-  //console.log("typeVal: ", typeVal);
   if (!typeVal){
     throw new Error('missing typeVal');
   }
   switch(true){
     case isString(typeVal):
+      //console.log("string literal");
       return literalFailTest(typeVal);
     case (typeVal === String):
+      //console.log("string class");
       return stringFailTest;
     case (typeVal === Array):
+      //console.log("array class");
       return arrayPrototypeFailTest;
     case (typeVal === Number):
+      //console.log("number class");
       return numberFailTest;
     case (typeVal === Boolean):
+      //console.log("boolean class");
       return booleanFailTest;
     case (typeVal instanceof RegExp):
+      //console.log("regexp class");
       return regexpFailTest(typeVal);
     case (['number', 'boolean'].indexOf(typeof typeVal) !== -1):
+      //console.log("number / boolean class");
       return literalFailTest(typeVal);
-    case (typeof typeVal == 'function'):
-      return functionFailTest(typeVal);
     case (Array.isArray(typeVal)):
       //console.log("array test");
       return arrayFailTest(typeVal);
     case (isWrapped(typeVal)):
       // this is a wrapped type
+      //console.log("passed isWrapped");
       switch(true){
         case (typeVal.type == 'oneOf'):
           return oneOfFailTest(typeVal.choices);
@@ -51,8 +56,13 @@ validators.all = function(typeVal){
         default:
           throw new Error("wrapped type unknown");
       }
-    case (isObject(typeVal)):
+    case (typeVal === Object) || isObject(typeVal):
+      //console.log("isObject or is `Object`");
       return objectFailTest(typeVal);
+    case (typeof typeVal == 'function'):
+      // this has to go below anything that could be a constructor
+      //console.log("function");
+      return functionFailTest(typeVal);
     default:
       //console.log("typeVal: ", typeVal);
       throw new Error('unknown schema type: ' + typeVal);
@@ -217,14 +227,17 @@ const O = require('./object');
 validators.object = O;
 
 function objectFailTest(schema){
-  var tester = O(schema);
+  var tester = null;
+  if (schema === Object){
+    tester = O();
+  } else {
+    tester = O(schema);
+  }
   return function(vals, key){
     if (vals == null){
       return error.missingValue(key, schema);
     }
-    var retval = tester.test(vals);
-    // console.log("retval: ", retval);
-    return retval;
+    tester.test(vals);
   };
 }
 

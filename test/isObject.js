@@ -12,10 +12,12 @@ describe('isObject', function(){
       'null': null,
       'undefined': undefined,
       date: new Date(),
+      Date: Date,
       numberObject: new Number(),
       'function': function(){},
       boolean: true,
       booleanObject: new Boolean(true),
+      booleanClass: Boolean,
       stringObj: new String("asdf"),
       emptyString: "",
       aNull: null,
@@ -32,7 +34,7 @@ describe('isObject', function(){
   });
 
   it ("returns true for objects", function(){
-    assert.isOk({});
+    assert.isOk(isObject({}));
   });
 
 });
