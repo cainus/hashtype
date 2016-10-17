@@ -1,5 +1,5 @@
 var error = require('./error');
-var isObject = require('./isObject');
+var isObject = require('./PlainObjectValidator').identify;
 
 var validators = {};
 

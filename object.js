@@ -1,12 +1,5 @@
 var error = require('./error');
-var isObject = require('./isObject');
-var assert = require('assert');
-var traverse = require('traverse');
-var deepEqual = require('deep-equal');
-var difflet = require('difflet');
-var stringify = require('json-stable-stringify');
-var _ = require('lodash');
-var consoleError = global[`consol${""}e`][`erro${""}r`]; // fool the linter
+var isObject = require('./PlainObjectValidator').identify;
 
 // ------------------------------
 // object validator
@@ -136,55 +129,5 @@ function objectValidator(schema){
 
 
 
-
-var assertObjectEquals = function (actual, expected, options){
-  if (actual == null) {
-    var result = actual === expected;
-    if (!result) {
-      consoleError("Actual", JSON.stringify(actual, null, 2));
-      consoleError("Expected", JSON.stringify(expected, null, 2));
-      assert.fail(actual, expected);
-    }
-    return result;
-  }
-
-  if (options && options.unordered) {
-    actual = actual.map(stringify).
-                   sort().
-                   map(JSON.parse);
-                 expected = expected.map(stringify).
-                   sort().
-                   map(JSON.parse);
-  }
-
-  // strip the milliseconds off all dates
-  traverse(expected).forEach(function (x) {
-    if (_.isDate(x)) {
-      x.setMilliseconds(0);
-      this.update(x);
-    }
-  });
-  // strip the milliseconds off all dates
-  traverse(actual).forEach(function (x) {
-    if (_.isDate(x)) {
-      x.setMilliseconds(0);
-      this.update(x);
-    }
-  });
-  if (!deepEqual(actual, expected)){
-    process.stdout.write(difflet.compare(actual, expected));
-    consoleError("\n\nactual");
-    consoleError(JSON.stringify(actual, null, 2));
-    consoleError("\n\nexpected");
-    consoleError(JSON.stringify(expected, null, 2));
-    consoleError("\n\n");
-    assert.fail(actual, expected);
-    return false;
-  }
-  return true;
-};
-
-// TODO remove this method if we don't need it
-assertObjectEquals({},{});
 
 module.exports = O;

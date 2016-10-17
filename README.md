@@ -5,7 +5,6 @@
 liken is a library for declarative pattern matching and
 validation for javascript objects.
 
-
 ### Example:
 
 ```javascript
@@ -25,6 +24,15 @@ liken({
 
 ```
 
+### Features:
+
+* Schemas are memoized for faster repeated exection.
+* TODO It can bail on the first error (for speed), or return all errors
+* TODO It can show pretty diffs
+
+### TODO:
+* kill the fluent interface.  make a 1 param call return the validator. make a 2 param call validate
+* get date matching working with precision options
 
 ### Types:
 
@@ -60,15 +68,16 @@ Arrays are supported 3 ways:
 
 ### Plan:
 make these work
-* literal string
-* literal number
-* literal boolean
-* arrays of simple literals
-* objects of simple literals
-* arrays with arrays
-* arrays of objects
-* objects with arrays
-* objects with arrays
+* DONE literal string
+* DONE literal number
+* DONE literal boolean
+* DONE arrays of simple literals
+* DONE objects of simple literals
+* DONE arrays with arrays
+* DONE arrays of objects
+* DONE objects with arrays
+* DONE objects with arrays
+* dates with precision options
 * any string using regex
 * enum of literals (oneOf)
 * some type extension
