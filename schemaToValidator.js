@@ -3,6 +3,7 @@
 let PlainObjectValidator = null; // require()'d later to avoid circular requires
 let ArrayValidator = null; // require()'d later to avoid circular requires
 const SimpleNativeValidator = require('./SimpleNativeValidator');
+const StringValidator = require('./StringValidator');
 const DateValidator = require('./DateValidator');
 
 // add a validator to the top of the validator stack
@@ -20,6 +21,7 @@ function schemaToValidator (schema, extraValidators) {
     ArrayValidator = require('./ArrayValidator');
     const validators = [
       SimpleNativeValidator,
+      StringValidator,
       PlainObjectValidator,
       ArrayValidator,
       DateValidator,

@@ -6,13 +6,16 @@ function isValidDate (input) {
   return false;
 }
 
-function getError(actual, expected) {
-  const err = new Error('Mismatched');
+function getError (actual, expected) {
+  const err = new Error('MismatchedValue');
   err.actual = actual;
   err.expected = expected;
   return err;
 }
 
+function formatActual (actual) {
+  return {'#date': actual.toISOString()};
+}
 
 class DateValidator {
 
@@ -65,40 +68,50 @@ class DateValidator {
   assert (input) {
     const options = this.schema;
     if (!isValidDate(input)){
-      throw getError(input, this.toJSON());
+      throw getError(formatActual(input), this.toJSON());
     }
     if (options.equals != null){
       if (input.getTime() !== options.equals.getTime()){
-        throw getError(input, this.toJSON());
+        throw getError(formatActual(input), this.toJSON());
       }
     }
     if (options.recent != null){
       const tenSecondsAgo = new Date((new Date().getTime()) - (10 * 1000));
       if (options.recent === true){
         if (tenSecondsAgo > input){
-          throw getError(input, this.toJSON());
+          throw getError(formatActual(input), this.toJSON());
         }
       } else {
         if (tenSecondsAgo > input){
-          throw getError(input, this.toJSON());
+          throw getError(formatActual(input), this.toJSON());
         }
       }
     }
     if (options.before != null){
       if (input.getTime() >= options.before.getTime()){
-        throw getError(input, this.toJSON());
+        throw getError(formatActual(input), this.toJSON());
       }
     }
     if (options.after != null){
       if (input.getTime() <= options.after.getTime()){
-        throw getError(input, this.toJSON());
+        throw getError(formatActual(input), this.toJSON());
       }
     }
   }
 
   /* returns a JSON representation of the schema. */
   toJSON () {
-    return {'#date' : this.schema};
+    const subSchema = {};
+    var that = this;
+    ['before', 'after', 'equals'].forEach(function(key){
+      if (that.schema[key]){
+        subSchema[key] = that.schema[key].toISOString();
+      }
+    });
+    if (this.schema.recent != null){
+      subSchema.recent = this.schema.recent;
+    }
+    return {'#date' : subSchema};
   }
 
   /* @schema : basically anything that will denote that this
@@ -107,6 +120,9 @@ class DateValidator {
    * returns true if this validator should be used.
    */
   static identify (date) {
+    if (date == null){
+      return false;
+    }
     if (isValidDate(date)){
       return true;
     }
