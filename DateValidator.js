@@ -7,7 +7,7 @@ function isValidDate (input) {
 }
 
 function getError(actual, expected) {
-  const err = new Error('ValueError');
+  const err = new Error('Mismatched');
   err.actual = actual;
   err.expected = expected;
   return err;
@@ -68,16 +68,13 @@ class DateValidator {
       throw getError(input, this.toJSON());
     }
     if (options.equals != null){
-      if (!isValidDate(options.equals)){
-        throw getError(input, this.toJSON());
-      }
       if (input.getTime() !== options.equals.getTime()){
         throw getError(input, this.toJSON());
       }
     }
-    if (this.options.recent != null){
+    if (options.recent != null){
       const tenSecondsAgo = new Date((new Date().getTime()) - (10 * 1000));
-      if (this.options.recent === true){
+      if (options.recent === true){
         if (tenSecondsAgo > input){
           throw getError(input, this.toJSON());
         }
@@ -87,23 +84,16 @@ class DateValidator {
         }
       }
     }
-    if (this.options.before != null){
-      if (!isValidDate(options.before)){
-        throw getError(input, this.toJSON());
-      }
+    if (options.before != null){
       if (input.getTime() >= options.before.getTime()){
         throw getError(input, this.toJSON());
       }
     }
-    if (this.options.after != null){
-      if (!isValidDate(options.after)){
-        throw getError(input, this.toJSON());
-      }
+    if (options.after != null){
       if (input.getTime() <= options.after.getTime()){
         throw getError(input, this.toJSON());
       }
     }
-
   }
 
   /* returns a JSON representation of the schema. */

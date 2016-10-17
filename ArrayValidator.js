@@ -20,12 +20,18 @@ class ArrayValidator {
   }
 
   assert (input) {
+    if (!Array.isArray(input)){
+      const err = new Error('MismatchedValue');
+      err.actual = input;
+      err.expected = this.toJSON();
+      throw err;
+    }
     const errors = [];
     var tested = [];
     for(var key in input){
       tested.push(key);
       if (this.schema[key] == null){
-        const err = new Error('UnexpectedKey');
+        const err = new Error('UnexpectedValue');
         err.expected = null;
         err.actual = input[key];
         errors.push(err);
@@ -41,7 +47,7 @@ class ArrayValidator {
     // those are the missing key / values on input
     for (const name in this.schema){
       if (!tested.includes(name)){
-        const err = new Error('MissingKey');
+        const err = new Error('MissingValue');
         err.expected = this.schema[name].toJSON();
         err.actual = null;
         errors.push(err);
@@ -49,7 +55,7 @@ class ArrayValidator {
     }
 
     if (errors.length > 0){
-      const err = new Error('ValueError');
+      const err = new Error('MismatchedValue');
       err.actual = input;
       err.expected = this.toJSON();
       err.errors = errors;
@@ -58,9 +64,10 @@ class ArrayValidator {
   }
 
   toJSON () {
-    return this.schema.map(function(item){
+    const json = this.schema.map(function(item){
       return item.toJSON();
     });
+    return json;
   }
 
   static identify (schema) {

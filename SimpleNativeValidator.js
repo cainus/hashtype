@@ -29,7 +29,7 @@ class SimpleNativeValidator {
    **/
   assert (input) {
     if (!this.validate(input)){
-      const err = new Error('ValueError');
+      const err = new Error('MismatchedValue');
       err.actual = input;
       err.expected = this.schema;
       throw err;

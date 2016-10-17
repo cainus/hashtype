@@ -29,10 +29,19 @@ function expectValueError(fn){
   return ex;
 }
 
-function getError(schema, actual){
+function getError(actual, schema){
+  if (schema == null){
+    schema = actual;
+    try {
+      liken(schema);
+    } catch (ex) {
+      return ex;
+    }
+    consoleError("expected exception did not throw.");
+    throw new Error('Expected exception did not throw');
+  }
   try {
-    const validate = liken(schema);
-    validate(actual);
+    liken(actual, schema);
   } catch (ex) {
     return ex;
   }
@@ -49,21 +58,21 @@ function expectProperties(obj, props){
   // assertObjectEquals(obj, props);
 }
 function expectMissingParamToThrow(schema){
-  var error = getError(schema);
+  var error = getError(null, schema);
   expectProperties(error, {
     subType: 'missing value', path: null, expected: schema
   });
 }
-function expectValueMismatchToThrow(schema, wrongType){
-  var error = getError(schema, wrongType);
-  expectProperties(error, {
-    subType: 'invalid value', path: null, expected: schema, actual: wrongType
-  });
+
+function expectValueErrorToThrow(schema, wrongType){
+  var error = getError(wrongType, schema);
+  expect(error.message).to.eql('MismatchedValue');
+  expect(error.actual).to.eql(wrongType);
 }
 
 
 function expectTypeMismatchToThrow(schema, wrongVal, expectedType, actualType){
-  var error = getError(schema, wrongVal);
+  var error = getError(wrongVal, schema);
   expectProperties(error, {
     subType: 'invalid type', path: null, value: wrongVal, expectedValue: schema, expectedType: expectedType, actualType: actualType
   });
@@ -121,7 +130,7 @@ module.exports = {
   assertObjectEquals,
   consoleError,
   raise,
-  expectValueMismatchToThrow,
+  expectValueErrorToThrow,
   expectValueError,
   expectMissingParamToThrow,
   expectTypeMismatchToThrow,

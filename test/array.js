@@ -1,3 +1,8 @@
+/*
+
+
+ TODO: use these on ArrayValidator
+
 var L = require("../array");
 var expect = require('chai').expect;
 
@@ -66,3 +71,4 @@ describe("array", function(){
   });
 
 });
+*/

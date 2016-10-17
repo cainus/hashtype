@@ -26,7 +26,7 @@ class PlainObjectValidator {
     for(var key in input){
       tested.push(key);
       if (this.schema[key] == null){
-        const err = new Error('UnexpectedKey');
+        const err = new Error('UnexpectedValue');
         err.expected = null;
         err.actual = input[key];
         errors.push(err);
@@ -42,7 +42,7 @@ class PlainObjectValidator {
     // those are the missing key / values on input
     for (const name in this.schema){
       if (!tested.includes(name)){
-        const err = new Error('MissingKey');
+        const err = new Error('MissingValue');
         err.expected = this.schema[name].toJSON();
         err.actual = null;
         errors.push(err);
@@ -50,7 +50,7 @@ class PlainObjectValidator {
     }
 
     if (errors.length > 0){
-      const err = new Error('ValueError');
+      const err = new Error('MismatchedValue');
       err.actual = input;
       err.expected = this.toJSON();
       err.errors = errors;
