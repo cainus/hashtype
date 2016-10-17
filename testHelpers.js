@@ -31,11 +31,12 @@ function expectValueError(fn){
 
 function getError(schema, actual){
   try {
-    var retval = liken(schema).to(actual);
+    const validate = liken(schema);
+    validate(actual);
   } catch (ex) {
     return ex;
   }
-  consoleError("expected exception did not throw. return value: ", retval);
+  consoleError("expected exception did not throw.");
   throw new Error('Expected exception did not throw');
 }
 function expectProperties(obj, props){

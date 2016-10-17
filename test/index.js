@@ -1,6 +1,6 @@
 const liken = require('../index');
-var optional = liken.optional;
-var oneOf = liken.oneOf;
+//var optional = liken.optional;
+// var oneOf = liken.oneOf;
 var expect = require('chai').expect;
 // TODO what about default values?!?
 
@@ -19,9 +19,11 @@ describe('liken (index.js)', function(){
     it ('returns multiple errors where appropriate', function(){
       var ex = raise(function(){
         liken({
+          firstName: 42, answer: "Test"
+        },{
           firstName: String,
           answer: Number
-        }).validateAll({firstName: 42, answer: "Test"});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -34,9 +36,9 @@ describe('liken (index.js)', function(){
   describe("validate", function(){
     it ('errors when missing expected strings', function(){
       var ex = raise(function(){
-        liken({
+        liken({}, {
           firstName: String
-        }).validate({});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -46,9 +48,9 @@ describe('liken (index.js)', function(){
     });
     it ('errors when expecting a string but getting another type', function(){
       var ex = raise(function(){
-        liken({
+        liken({firstName: 1234}, {
           firstName: String
-        }).validate({firstName: 1234});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -59,8 +61,10 @@ describe('liken (index.js)', function(){
     it ('errors when expecting a number but getting another type', function(){
       var ex = raise(function(){
         liken({
+          answer: "42"
+        }, {
           answer: Number
-        }).validate({answer: "42"});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -71,8 +75,10 @@ describe('liken (index.js)', function(){
     it ('errors when expecting an array but get another type', function(){
       var ex = raise(function(){
         liken({
+          answers: "42"
+        },{
           answers: Array
-        }).validate({answers: "42"});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -80,7 +86,9 @@ describe('liken (index.js)', function(){
         {subType: 'invalid type', path: 'answers', value: "42", expectedType: 'Array', actualType: 'string'}
       ]);
     });
-    it ('errors when expecting a oneOf but get another type', function(){
+    // TODO later
+    /*
+    xit ('errors when expecting a oneOf but get another type', function(){
       var ex = raise(function(){
         liken({
           answers: oneOf(String, Number)
@@ -92,11 +100,14 @@ describe('liken (index.js)', function(){
         {subType: 'invalid type', path: 'answers', value: true, expectedType: 'oneOf', actualType: 'boolean'}
       ]);
     });
+    */
     it ('errors when expecting a string literal but getting another type', function(){
       var ex = raise(function(){
         liken({
+          answer: "42"
+        },{
           answer: "yellow"
-        }).validate({answer: "42"});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -107,8 +118,10 @@ describe('liken (index.js)', function(){
     it ('errors when expecting an array of numbers but getting another type of array', function(){
       var ex = raise(function(){
         liken({
+          answer: ["42"]
+        },{
           answer: liken.array({type:Number})
-        }).validate({answer: ["42"]});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -120,8 +133,10 @@ describe('liken (index.js)', function(){
     it ('errors when expecting a string matching a regex but gets another string', function(){
       var ex = raise(function(){
         liken({
+          answer: "42"
+        },{
           answer: /^[a-z]+$/
-        }).validate({answer: "42"});
+        });
       });
       expect(ex).to.be.an.instanceof(TypeError);
       expect(ex.message).to.eql('invalid type');
@@ -130,6 +145,7 @@ describe('liken (index.js)', function(){
       ]);
     });
     // TODO dynamic objects
+    /*
     xit ('returns true when matching', function(){
       expect(
         liken({
@@ -235,19 +251,9 @@ describe('liken (index.js)', function(){
         allowAdditionalProperties: false
       });
     });
-  });
-  it("fails for the function type", function(){
-    var ex = raise(function(){
-      liken({
-        someFn: function(){}
-      }).toJsonSchema();
-    });
-    expect(ex).to.be.an.instanceof(Error);
-    expect(ex.message).to.eql('unsupported jsonschema type: function (){}');
+  */
   });
 });
 
-// TODO nesting!
-// TODO literals!
 // TODO typed arrays
 // type("array", String), type("any"), type("array"

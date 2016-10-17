@@ -3,6 +3,7 @@
 let PlainObjectValidator = null; // require()'d later to avoid circular requires
 let ArrayValidator = null; // require()'d later to avoid circular requires
 const SimpleNativeValidator = require('./SimpleNativeValidator');
+const DateValidator = require('./DateValidator');
 
 // add a validator to the top of the validator stack
 function register (validator, validators) {
@@ -20,7 +21,8 @@ function schemaToValidator (schema, extraValidators) {
     const validators = [
       SimpleNativeValidator,
       PlainObjectValidator,
-      ArrayValidator
+      ArrayValidator,
+      DateValidator,
     ];
     // allow some extra validators to be thrown on top
     if (extraValidators){

@@ -16,7 +16,7 @@ describe('liken literals', function(){
       expectMissingParamToThrow([]);
     });
     it ('allows matching values', function(){
-      liken([]).to([]);
+      liken([], []);
     });
     it ('errors for excess items', function(){
       var error = getError([], ["asdf"]);
