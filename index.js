@@ -1,6 +1,6 @@
 const schemaToValidator = require('./schemaToValidator');
 
-class DateNotification {
+class DateNotation {
   constructor () {
     this['#date'] = {};
   }
@@ -18,6 +18,23 @@ class DateNotification {
 
 }
 
+class NumberNotation {
+  constructor () {
+    this['#number'] = {};
+  }
+
+  integer () {
+    this['#number'].integer = true;
+    return this;
+  }
+
+  toObject () {
+    return {
+      '#number': this['#number']
+    };
+  }
+
+}
 
 function factory (actual, schema){
   if (schema == null){
@@ -30,7 +47,11 @@ function factory (actual, schema){
 }
 
 factory.date = function(){
-  return new DateNotification();
+  return new DateNotation();
+};
+
+factory.number = function(){
+  return new NumberNotation();
 };
 
 /*

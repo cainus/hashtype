@@ -1,6 +1,6 @@
 {
   "name": "liken",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "javascript object matcher",
   "main": "index.js",
   "scripts": {
