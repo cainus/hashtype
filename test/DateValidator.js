@@ -3,6 +3,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var DateValidator = require('../DateValidator');
 var PlainObjectValidator = require('../PlainObjectValidator');
+const liken = require('../index');
 
 describe('DateValidator', function(){
   describe('identify', function(){
@@ -51,6 +52,20 @@ describe('DateValidator', function(){
           equals: (new Date(1970)).toJSON()
         }
       });
+    });
+  });
+
+  describe("#notification generator", function(){
+    it ("generates a date notation", function(){
+      expect(liken.date()).to.eql({'#date': {}});
+    });
+    it ("generates a recent date notation", function(){
+      expect(liken.
+        date().
+        recent()).to.eql({'#date': {recent: true}});
+    });
+    it ("works for recent notation", function(){
+      liken(new Date(), liken.date().recent());
     });
   });
 

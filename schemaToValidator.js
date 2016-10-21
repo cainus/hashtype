@@ -22,9 +22,10 @@ function schemaToValidator (schema, extraValidators) {
     const validators = [
       SimpleNativeValidator,
       StringValidator,
-      PlainObjectValidator,
-      ArrayValidator,
       DateValidator,
+      ArrayValidator,
+      PlainObjectValidator, // this must come last in case the others use an
+                            // object notation
     ];
     // allow some extra validators to be thrown on top
     if (extraValidators){

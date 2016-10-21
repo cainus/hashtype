@@ -1,5 +1,24 @@
 const schemaToValidator = require('./schemaToValidator');
 
+class DateNotification {
+  constructor () {
+    this['#date'] = {};
+  }
+
+  recent () {
+    this['#date'].recent = true;
+    return this;
+  }
+
+  toObject () {
+    return {
+      '#date': this['#date']
+    };
+  }
+
+}
+
+
 function factory (actual, schema){
   if (schema == null){
     schema = actual;
@@ -9,6 +28,10 @@ function factory (actual, schema){
   const validator = schemaToValidator(schema);
   validator.assert(actual);
 }
+
+factory.date = function(){
+  return new DateNotification();
+};
 
 /*
 Liken.optional = function(type){
