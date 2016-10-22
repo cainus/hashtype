@@ -33,6 +33,7 @@ class PlainObjectValidator {
         try {
           this.schema[key].assert(input[key]);
         } catch (ex) {
+          ex.key = key;
           errors.push(ex);
         }
       }

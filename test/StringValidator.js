@@ -76,7 +76,7 @@ describe('StringValidator', function(){
       var error = getError(underTest, expected);
       expect(error.message).to.eql('MismatchedValue');
       expect(error.expected).to.eql({'#string': { matches: '/test/' }});
-      expect(error.actual).to.eql({'#string': underTest});
+      expect(error.actual).to.eql(underTest);
     });
   });
 

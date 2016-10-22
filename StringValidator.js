@@ -8,10 +8,6 @@ function isString(input){
   return (typeof input === 'string' || input instanceof String);
 }
 
-function formatActual (actual) {
-  return {'#string': actual};
-}
-
 class StringValidator {
 
   /* @schema : basically anything that will denote
@@ -60,11 +56,11 @@ class StringValidator {
   assert (input) {
     const options = this.schema;
     if (!isString(input)){
-      throw error.MismatchedValue(formatActual(input), this.toJSON());
+      throw error.MismatchedValue(input, this.toJSON());
     }
     if (options.matches != null){
       if (!options.matches.test(input)){
-        throw error.MismatchedValue(formatActual(input), this.toJSON());
+        throw error.MismatchedValue(input, this.toJSON());
       }
     }
   }

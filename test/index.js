@@ -127,8 +127,7 @@ describe('liken (index.js)', function(){
       expect(ex.actual).to.eql({answer: "42"});
       expect(ex.expected).to.eql({answer: "yellow"});
     });
-    // TODO later
-    xit ('errors when expecting a string matching a regex but gets another string', function(){
+    it ('errors when expecting a string matching a regex but gets another string', function(){
       var ex = raise(function(){
         liken({
           answer: "42"
@@ -136,11 +135,12 @@ describe('liken (index.js)', function(){
           answer: /^[a-z]+$/
         });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'invalid value', path: 'answer', expected: /^[a-z]+$/, actual: "42"}
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.errors).to.have.length(1);
+      expect(ex.errors[0].key).to.eql('answer');
+      expect(ex.errors[0].expected).to.eql({"#string":{"matches":"/^[a-z]+$/"}});
+      expect(ex.errors[0].actual).to.eql("42");
     });
     // TODO dynamic objects
     /*
