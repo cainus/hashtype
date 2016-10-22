@@ -50,6 +50,14 @@ factory.date = function(){
   return new DateNotation();
 };
 
+factory.addNotation = function(name, whatever){
+  if (factory[name]){
+    throw new Error('property already exists: ' + name);
+  }
+  factory[name] = whatever;
+  return factory;
+};
+
 factory.number = function(){
   return new NumberNotation();
 };

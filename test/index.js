@@ -16,8 +16,7 @@ function raise(fn){
 
 describe('liken (index.js)', function(){
   describe("validateAll", function(){
-    // TODO later: handle type checks only
-    xit ('returns multiple errors where appropriate', function(){
+    it ('returns multiple errors where appropriate', function(){
       var ex = raise(function(){
         liken({
           firstName: 42, answer: "Test"
@@ -26,43 +25,40 @@ describe('liken (index.js)', function(){
           answer: Number
         });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'invalid type', path: 'firstName', value: 42, expectedType: 'String', actualType: 'number'},
-        {subType: 'invalid type', path: 'answer', value: "Test", expectedType: 'Number', actualType: 'string'},
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.errors).to.have.length(2);
+      expect(ex.errors[0].key).to.eql('firstName');
+      expect(ex.errors[0].actual).to.eql(42);
+      expect(ex.errors[0].expected).to.eql({'#string': {}});
     });
   });
   describe("validate", function(){
-    // TODO later: handle type checks only
-    xit ('errors when missing expected strings', function(){
+    it ('errors when missing expected strings', function(){
       var ex = raise(function(){
         liken({}, {
           firstName: String
         });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'missing value', path: 'firstName', expected: 'String'}
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.errors).to.have.length(1);
+      expect(ex.errors[0].actual).to.eql(null);
+      expect(ex.errors[0].expected).to.eql({'#string': {}});
     });
-    // TODO later: handle type checks only
-    xit ('errors when expecting a string but getting another type', function(){
+    it ('errors when expecting a string but getting another type', function(){
       var ex = raise(function(){
         liken({firstName: 1234}, {
           firstName: String
         });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'invalid type', path: 'firstName', value: 1234, expectedType: 'String', actualType: 'number'}
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.errors).to.have.length(1);
+      expect(ex.errors[0].actual).to.eql(1234);
+      expect(ex.errors[0].expected).to.eql({'#string': {}});
     });
-    // TODO later: handle type checks only
-    xit ('errors when expecting a number but getting another type', function(){
+    it ('errors when expecting a number but getting another type', function(){
       var ex = raise(function(){
         liken({
           answer: "42"
@@ -70,11 +66,11 @@ describe('liken (index.js)', function(){
           answer: Number
         });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'invalid type', path: 'answer', value: "42", expectedType: 'Number', actualType: 'string'}
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.errors).to.have.length(1);
+      expect(ex.errors[0].actual).to.eql("42");
+      expect(ex.errors[0].expected).to.eql({'#number': {}});
     });
     // TODO later: handle type checks only
     xit ('errors when expecting an array but get another type', function(){
