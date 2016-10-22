@@ -1,3 +1,4 @@
+const error = require('./error');
 
 function isRegExp (input) {
   return (input instanceof RegExp);
@@ -5,13 +6,6 @@ function isRegExp (input) {
 
 function isString(input){
   return (typeof input === 'string' || input instanceof String);
-}
-
-function getError (actual, expected) {
-  const err = new Error('MismatchedValue');
-  err.actual = actual;
-  err.expected = expected;
-  return err;
 }
 
 function formatActual (actual) {
@@ -66,11 +60,11 @@ class StringValidator {
   assert (input) {
     const options = this.schema;
     if (!isString(input)){
-      throw getError(formatActual(input), this.toJSON());
+      throw error.MismatchedValue(formatActual(input), this.toJSON());
     }
     if (options.matches != null){
       if (!options.matches.test(input)){
-        throw getError(formatActual(input), this.toJSON());
+        throw error.MismatchedValue(formatActual(input), this.toJSON());
       }
     }
   }

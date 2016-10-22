@@ -86,6 +86,11 @@ describe('ArrayValidator', function(){
       expect(error.errors[0].actual).to.eql({isSub:false});
       expect(error.errors[0].expected).to.eql({isSub:true});
     });
+    it ('allows matching sub-object regexes', function(){
+      var expected = [{asdf:"asdf"}, {isSub: /true/}];
+      var underTest = [{asdf:"asdf"}, {isSub:'true'}];
+      check(expected, underTest);
+    });
     it ('errors for excess items', function(){
       var expected = [];
       var underTest = ["value"];

@@ -1,26 +1,31 @@
 
-var errors = {};
+var error = {};
 
-errors.invalidType = function(path, expectedType, value, expectedValue){
-  //console.log("invalidtype: ", expectedType);
-  //if (Array.isArray(expectedType)){
-  //  expectedType = JSON.stringify(expectedType);
-  //  console.log("stringif: ", expectedType);
-  //}
-  var errorData = {subType: 'invalid type', path: path, value: value, expectedType: expectedType, actualType: typeof value};
-  if (expectedValue){
-    errorData.expectedValue = expectedValue;
+
+error.MismatchedValue = function(actual, expected, key){
+  const err = new Error('MismatchedValue');
+  err.expected = expected;
+  err.actual = actual;
+  if (key != null){
+    err.key = key;
   }
-  return errorData;
-};
-errors.invalidValue = function(path, expected, value){
-  return {subType: 'invalid value', path: path, expected: expected, actual: value};
-};
-errors.missingValue = function(path, expected){
-  return {subType: 'missing value', path: path, expected: expected};
-};
-errors.excessValue = function(path, actual){
-  return {subType: 'excess value', path: path, actual: actual};
+  return err;
 };
 
-module.exports = errors;
+error.MissingValue = function(expected, key){
+  const err = new Error('MissingValue');
+  err.expected = expected;
+  err.actual = null;
+  err.key = key;
+  return err;
+};
+
+error.UnexpectedValue = function(actual, key){
+  const err = new Error('UnexpectedValue');
+  err.expected = null;
+  err.actual = actual;
+  err.key = key;
+  return err;
+};
+
+module.exports = error;

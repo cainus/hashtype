@@ -1,11 +1,4 @@
-
-
-function getError (actual, expected) {
-  const err = new Error('MismatchedValue');
-  err.actual = actual;
-  err.expected = expected;
-  return err;
-}
+const error = require('./error');
 
 class NumberValidator {
 
@@ -53,11 +46,11 @@ class NumberValidator {
   assert (input) {
     const options = this.schema;
     if (typeof input !== 'number'){
-      throw getError(input, this.toJSON());
+      throw error.MismatchedValue(input, this.toJSON());
     }
     if (options.integer === true){
       if (!Number.isInteger(input)){
-        throw getError(input, this.toJSON());
+        throw error.MismatchedValue(input, this.toJSON());
       }
     }
   }

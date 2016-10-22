@@ -1,3 +1,4 @@
+const error = require('./error');
 
 class SimpleNativeValidator {
 
@@ -29,10 +30,7 @@ class SimpleNativeValidator {
    **/
   assert (input) {
     if (!this.validate(input)){
-      const err = new Error('MismatchedValue');
-      err.actual = input;
-      err.expected = this.schema;
-      throw err;
+      throw error.MismatchedValue(input, this.schema);
     }
   }
 
