@@ -26,27 +26,30 @@ class ArrayValidator {
     }
     const errors = [];
     var tested = [];
-    for(var key in input){
+    const schema = this.schema;
+    input.forEach(function(item, key){
       tested.push(key);
-      if (this.schema[key] == null){
-        const err = error.UnexpectedValue(input[key], key);
+      if (schema[key] == null){
+        const err = error.UnexpectedValue(item, key);
         errors.push(err);
       } else {
         try {
-          this.schema[key].assert(input[key]);
+          schema[key].assert(item);
         } catch (ex) {
+          ex.key = key;
           errors.push(ex);
         }
       }
-    }
+    });
+
     // get the diff between tested and the keys of schema.
     // those are the missing key / values on input
-    for (const name in this.schema){
-      if (!tested.includes(name)){
-        const err = error.MissingValue(this.schema[name].toJSON(), name);
+    schema.forEach(function(item, key){
+      if (!tested.includes(key)){
+        const err = error.MissingValue(schema[key].toJSON(), key);
         errors.push(err);
       }
-    }
+    });
 
     if (errors.length > 0){
       const err = error.MismatchedValue(input, this.toJSON());

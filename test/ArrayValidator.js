@@ -71,6 +71,7 @@ describe('ArrayValidator', function(){
       expect(error.expected).to.eql(expected);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
+      expect(error.errors[0].key).to.eql(1);
       expect(error.errors[0].message).to.eql('MismatchedValue');
       expect(error.errors[0].actual).to.eql(false);
       expect(error.errors[0].expected).to.eql(true);
@@ -82,6 +83,7 @@ describe('ArrayValidator', function(){
       expect(error.expected).to.eql(expected);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
+      expect(error.errors[0].key).to.eql(1);
       expect(error.errors[0].message).to.eql('MismatchedValue');
       expect(error.errors[0].actual).to.eql({isSub:false});
       expect(error.errors[0].expected).to.eql({isSub:true});

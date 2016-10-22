@@ -142,33 +142,32 @@ describe('liken (index.js)', function(){
       expect(ex.errors[0].expected).to.eql({"#string":{"matches":"/^[a-z]+$/"}});
       expect(ex.errors[0].actual).to.eql("42");
     });
-    // TODO dynamic objects
-    /*
     xit ('returns true when matching', function(){
       expect(
         liken({
           firstName: String,
           fingerCount: Number,
-          employed: Boolean,
+          //employed: Boolean,
           alphabet: /^[a-z]+$/,
           literally: "literally",
-          someEnum: oneOf(Number, "literal"),
+          //someEnum: oneOf(Number, "literal"),
           //typedArray: [Number],
-          list: Array
-        }).validate({
+          //list: Array
+        }, {
           firstName: "Mickey",
           fingerCount:10,
-          employed:true,
+          //employed:true,
           alphabet: 'asdfsadf',
           literally:"literally",
-          someEnum: "literal",
+          //someEnum: "literal",
           //typedArray:[4,5,6,7,8],
-          list:[1,2,3,4]
+          //list:[1,2,3,4]
         })
       ).to.eql(true);
     });
     // TODO later.  this gets us option hash param validation
     xit ('returns true when an optional parameter is missing', function(){
+      const optional = liken.optional;
       expect(
         liken({
           firstName: String,
@@ -177,7 +176,7 @@ describe('liken (index.js)', function(){
           employed: optional(Boolean),
           alphabet: optional(/^[a-z]+$/),
           literally: optional("literally"),
-          maybeEnum: optional(oneOf(Number, String)),
+          //maybeEnum: optional(oneOf(Number, String)),
           list: optional(Array)
         }).validate({
           firstName: "Mickey"
@@ -189,6 +188,7 @@ describe('liken (index.js)', function(){
   // TODO maybe these should be wrapped with an extended() for easier identification?
   xdescribe("extended types", function(){
     it ('returns true when matching', function(){
+      const optional = liken.optional;
       expect(
         liken({
           firstName: function(val){ return /^[a-zA-Z]+$/.test(val); },
@@ -198,58 +198,6 @@ describe('liken (index.js)', function(){
         })
       ).to.eql(true);
     });
-  });
-  // TODO later
-  xdescribe("#toJsonSchema", function(){
-    it ("works", function(){
-      expect(liken({
-        firstName: String,
-        lastName: optional(String),
-        fingerCount: Number,
-        alpha: optional(/^[a-z]+$/),
-        employed: Boolean,
-        literal: "literal!",
-        stringNumber: oneOf(String, Number),
-      }).toJsonSchema()).to.eql({
-        type: "object",
-        properties: {
-          firstName:{
-            type: "string",
-            required: true
-          },
-          lastName:{
-            type: "string",
-            required: false
-          },
-          fingerCount:{
-            type: "number",
-            required: true
-          },
-          alpha: {
-            type: "string",
-            pattern: '^[a-z]+$',
-            required: false,
-          },
-          employed:{
-            type: "boolean",
-            required: true
-          },
-          literal:{
-            enum: ["literal!"],
-            required: true
-          },
-          stringNumber:{
-            enum: [
-              { type: "string" },
-              { type: "number" }
-            ],
-            required: true
-          }
-        },
-        allowAdditionalProperties: false
-      });
-    });
-  */
   });
 });
 

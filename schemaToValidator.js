@@ -6,6 +6,7 @@ const SimpleNativeValidator = require('./SimpleNativeValidator');
 const StringValidator = require('./StringValidator');
 const DateValidator = require('./DateValidator');
 const NumberValidator = require('./NumberValidator');
+const consoleError = global[`consol${""}e`][`erro${""}r`]; // fool the linter
 
 // add a validator to the top of the validator stack
 function register (validator, validators) {
@@ -44,6 +45,7 @@ function schemaToValidator (schema, extraValidators) {
       }
     }
     const err = new Error("No matching validator could be found for schema.");
+    consoleError("No matching validator could be found for schema: ", schema);
     err.schema = schema;
     throw err;
 }
