@@ -6,9 +6,13 @@ class ArrayValidator {
     if (!ArrayValidator.identify(schema)){
       throw new Error("Invalid schema for validator");
     }
-    this.schema = schema.map(function(item){
-      return schemaToValidator(item);
-    });
+    if (schema === Array){
+      this.schema = {'#array': {}};
+    } else {
+      this.schema = schema.map(function(item){
+        return schemaToValidator(item);
+      });
+    }
   }
 
   validate (input) {
@@ -23,6 +27,9 @@ class ArrayValidator {
   assert (input) {
     if (!Array.isArray(input)){
       throw error.MismatchedValue(input, this.toJSON());
+    }
+    if (this.schema['#array']){
+      return;
     }
     const errors = [];
     var tested = [];
@@ -59,6 +66,9 @@ class ArrayValidator {
   }
 
   toJSON () {
+    if (this.schema['#array']){
+      return this.schema;
+    }
     const json = this.schema.map(function(item){
       return item.toJSON();
     });
@@ -66,6 +76,9 @@ class ArrayValidator {
   }
 
   static identify (schema) {
+    if (schema === Array){
+      return true;
+    }
     if (!Array.isArray(schema)){
       return false;
     }

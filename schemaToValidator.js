@@ -2,6 +2,7 @@
 // some default validators
 let PlainObjectValidator = null; // require()'d later to avoid circular requires
 let ArrayValidator = null; // require()'d later to avoid circular requires
+let OneOfValidator = null; // require()'d later to avoid circular requires
 const SimpleNativeValidator = require('./SimpleNativeValidator');
 const StringValidator = require('./StringValidator');
 const DateValidator = require('./DateValidator');
@@ -21,12 +22,14 @@ function schemaToValidator (schema, extraValidators) {
     // set the default validators
     PlainObjectValidator = require('./PlainObjectValidator');
     ArrayValidator = require('./ArrayValidator');
+    OneOfValidator = require('./OneOfValidator');
     const validators = [
       SimpleNativeValidator,
       NumberValidator,
       StringValidator,
       DateValidator,
       ArrayValidator,
+      OneOfValidator,
       PlainObjectValidator, // this must come last in case the others use an
                             // object notation
     ];

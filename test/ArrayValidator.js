@@ -64,6 +64,9 @@ describe('ArrayValidator', function(){
     it ('allows matching with object properties', function(){
       check([0, "asdf", false], [0, "asdf", false]);
     });
+    it ('can match any array', function(){
+      check(Array, [0, "asdf", false]);
+    });
     it ('throws on non-matching object properties', function(){
       var expected = ["asdf", true];
       var underTest = ["asdf", false];

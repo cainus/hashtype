@@ -72,8 +72,7 @@ describe('liken (index.js)', function(){
       expect(ex.errors[0].actual).to.eql("42");
       expect(ex.errors[0].expected).to.eql({'#number': {}});
     });
-    // TODO later: handle type checks only
-    xit ('errors when expecting an array but get another type', function(){
+    it ('errors when expecting an array but get another type', function(){
       var ex = raise(function(){
         liken({
           answers: "42"
@@ -81,27 +80,39 @@ describe('liken (index.js)', function(){
           answers: Array
         });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'invalid type', path: 'answers', value: "42", expectedType: 'Array', actualType: 'string'}
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.actual).to.eql({answers: '42'});
+      expect(ex.expected).to.eql({answers: {'#array': {}}});
     });
-    // TODO later
-    /*
-    xit ('errors when expecting a oneOf but get another type', function(){
+    it ('errors when expecting a oneOf but get another type', function(){
       var ex = raise(function(){
         liken({
-          answers: oneOf(String, Number)
-        }).validate({answers: true});
+          answers: true
+        }, {
+          answers: liken.oneOf(String, Number)
+        });
       });
-      expect(ex).to.be.an.instanceof(TypeError);
-      expect(ex.message).to.eql('invalid type');
-      expect(ex.errors).to.eql([
-        {subType: 'invalid type', path: 'answers', value: true, expectedType: 'oneOf', actualType: 'boolean'}
-      ]);
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.actual).to.eql({answers: true});
+      expect(ex.expected).to.eql({answers: {'#oneOf': [
+        {'#string': {}},
+        {'#number': {}},
+      ]}});
     });
-    */
+    it ('matches multiple schemas with oneOf', function(){
+        liken({
+          answers: 14
+        }, {
+          answers: liken.oneOf(String, Number)
+        });
+        liken({
+          answers: "fourteen"
+        }, {
+          answers: liken.oneOf(String, Number)
+        });
+    });
     it ('matches dates', function(){
       var date = new Date();
       var copiedDate = new Date(date.getTime());
@@ -138,28 +149,27 @@ describe('liken (index.js)', function(){
       expect(ex.errors[0].expected).to.eql({"#string":{"matches":"/^[a-z]+$/"}});
       expect(ex.errors[0].actual).to.eql("42");
     });
-    xit ('returns true when matching', function(){
-      expect(
-        liken({
-          firstName: String,
-          fingerCount: Number,
-          //employed: Boolean,
-          alphabet: /^[a-z]+$/,
-          literally: "literally",
-          //someEnum: oneOf(Number, "literal"),
-          //typedArray: [Number],
-          //list: Array
-        }, {
-          firstName: "Mickey",
-          fingerCount:10,
-          //employed:true,
-          alphabet: 'asdfsadf',
-          literally:"literally",
-          //someEnum: "literal",
-          //typedArray:[4,5,6,7,8],
-          //list:[1,2,3,4]
-        })
-      ).to.eql(true);
+    it ('matches some stuff', function(){
+      liken(
+        {
+        firstName: "Mickey",
+        fingerCount:10,
+        //employed:true,
+        alphabet: 'asdfsadf',
+        literally:"literally",
+        someEnum: "literal",
+        //typedArray:[4,5,6,7,8],
+        list:[1,2,3,4]
+      }, {
+        firstName: String,
+        fingerCount: Number,
+        //employed: Boolean,
+        alphabet: /^[a-z]+$/,
+        literally: "literally",
+        someEnum: liken.oneOf(Number, "literal"),
+        //typedArray: [Number],
+        list: Array
+      });
     });
     // TODO later.  this gets us option hash param validation
     xit ('returns true when an optional parameter is missing', function(){
@@ -172,7 +182,7 @@ describe('liken (index.js)', function(){
           employed: optional(Boolean),
           alphabet: optional(/^[a-z]+$/),
           literally: optional("literally"),
-          //maybeEnum: optional(oneOf(Number, String)),
+          //maybeEnum: optional(liken.oneOf(Number, String)),
           list: optional(Array)
         }).validate({
           firstName: "Mickey"

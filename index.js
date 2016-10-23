@@ -71,14 +71,15 @@ Liken.optional = function(type){
   };
 };*/
 
-/*
-Liken.oneOf = function(){
+factory.oneOf = function(){
   var args = Array.prototype.slice.call(arguments);
+  args.forEach(function(arg){
+    // ensure there are validators for these schemas
+    schemaToValidator(arg);
+  });
   return {
-    ____liken: true,
-    type: "oneOf",
-    choices: args
+    '#oneOf': args
   };
-};*/
+};
 
 module.exports = factory;
