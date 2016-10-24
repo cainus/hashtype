@@ -62,14 +62,11 @@ factory.number = function(){
   return new NumberNotation();
 };
 
-/*
-Liken.optional = function(type){
+factory.optional = function(schema){
   return {
-    ____liken: true,
-    optional: true,
-    type: type
+    '#optional': schema
   };
-};*/
+};
 
 factory.oneOf = function(){
   var args = Array.prototype.slice.call(arguments);

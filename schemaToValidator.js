@@ -3,6 +3,7 @@
 let PlainObjectValidator = null; // require()'d later to avoid circular requires
 let ArrayValidator = null; // require()'d later to avoid circular requires
 let OneOfValidator = null; // require()'d later to avoid circular requires
+let OptionalValidator = null; // require()'d later to avoid circular requires
 const SimpleNativeValidator = require('./SimpleNativeValidator');
 const StringValidator = require('./StringValidator');
 const DateValidator = require('./DateValidator');
@@ -23,6 +24,7 @@ function schemaToValidator (schema, extraValidators) {
     PlainObjectValidator = require('./PlainObjectValidator');
     ArrayValidator = require('./ArrayValidator');
     OneOfValidator = require('./OneOfValidator');
+    OptionalValidator = require('./OptionalValidator');
     const validators = [
       SimpleNativeValidator,
       NumberValidator,
@@ -30,6 +32,7 @@ function schemaToValidator (schema, extraValidators) {
       DateValidator,
       ArrayValidator,
       OneOfValidator,
+      OptionalValidator,
       PlainObjectValidator, // this must come last in case the others use an
                             // object notation
     ];
@@ -42,7 +45,7 @@ function schemaToValidator (schema, extraValidators) {
     // check the schema for the right validator
     for (const validator of validators){
       if (validator.identify(schema)){
-        // return a mathcing validator for this schema
+        // return a matching validator for this schema
         const retval = new validator(schema);
         return retval;
       }

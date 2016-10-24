@@ -30,10 +30,6 @@ liken({
 * TODO It can bail on the first error (for speed), or return all errors
 * TODO It can show pretty diffs
 
-### TODO:
-* kill the fluent interface.  make a 1 param call return the validator. make a 2 param call validate
-* get date matching working with precision options
-
 ### Types:
 
 #### Array:
@@ -78,18 +74,20 @@ make these work
 * DONE objects with arrays
 * DONE objects with arrays
 * dates with precision options
-* any string using regex
-* enum of literals (oneOf)
+* DONE any string using regex
+* DONE enum of literals (oneOf)
 * some type extension
-* any string
-* any number
+* DONE any string
+* DONE any number
 * any boolean
-* any string (optional)
+* DONE any string (optional)
 * any array
 * any array of type
 * any array (unordered)
 * any array with segment (slice)
 * any object
+* objects with additional props
+* arrays with additional items
 * any function
 
 ### Misc:

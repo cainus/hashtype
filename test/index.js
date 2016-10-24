@@ -171,23 +171,20 @@ describe('liken (index.js)', function(){
         list: Array
       });
     });
-    // TODO later.  this gets us option hash param validation
-    xit ('returns true when an optional parameter is missing', function(){
+    it ('returns true when an optional parameter is missing', function(){
       const optional = liken.optional;
-      expect(
-        liken({
-          firstName: String,
-          lastName: optional(String),
-          fingerCount: optional(Number),
-          employed: optional(Boolean),
-          alphabet: optional(/^[a-z]+$/),
-          literally: optional("literally"),
-          //maybeEnum: optional(liken.oneOf(Number, String)),
-          list: optional(Array)
-        }).validate({
+      liken({
           firstName: "Mickey"
-        })
-      ).to.eql(true);
+        }, {
+        firstName: String,
+        lastName: optional(String),
+        fingerCount: optional(Number),
+  //      employed: optional(Boolean),
+        alphabet: optional(/^[a-z]+$/),
+        literally: optional("literally"),
+        maybeEnum: optional(liken.oneOf(Number, String)),
+        list: optional(Array)
+      });
     });
   });
   // TODO later, for adding additional types (mongoid?!)

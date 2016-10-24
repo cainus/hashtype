@@ -24,25 +24,26 @@ class PlainObjectValidator {
   assert (input) {
     const errors = [];
     var tested = [];
-    for(var key in input){
+    for(var key in this.schema){
       tested.push(key);
-      if (this.schema[key] == null){
-        const err = error.UnexpectedValue(input[key], key);
-        errors.push(err);
-      } else {
-        try {
-          this.schema[key].assert(input[key]);
-        } catch (ex) {
-          ex.key = key;
-          errors.push(ex);
+      try {
+        this.schema[key].assert(input[key]);
+      } catch (ex) {
+        let err = ex;
+        if (input[key] == null){
+          err = error.MissingValue(this.schema[key].toJSON(), key);
         }
+        err.key = key;
+        errors.push(err);
       }
     }
-    // get the diff between tested and the keys of schema.
+
+    // get the diff between tested and the keys of input.
     // those are the missing key / values on input
-    for (const name in this.schema){
+    for (const name in input){
       if (!tested.includes(name)){
-        const err = error.MissingValue(this.schema[name].toJSON(), name);
+        //const err = error.MissingValue(this.schema[name].toJSON(), name);
+        const err = error.UnexpectedValue(input[name], name);
         errors.push(err);
       }
     }
