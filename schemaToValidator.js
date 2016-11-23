@@ -8,16 +8,17 @@ const SimpleNativeValidator = require('./SimpleNativeValidator');
 const StringValidator = require('./StringValidator');
 const DateValidator = require('./DateValidator');
 const NumberValidator = require('./NumberValidator');
+const BooleanValidator = require('./BooleanValidator');
 const consoleError = global[`consol${""}e`][`erro${""}r`]; // fool the linter
 
 // add a validator to the top of the validator stack
 function register (validator, validators) {
-    if (!validator.identify) throw new Error("validator must have an identify() method");
-    if (!validator.assert) throw new Error("validator must have an assert() method");
-    if (!validator.validate) throw new Error("validator must have a validate() method");
-    if (!validator.toJSON) throw new Error("validator must have a toJSON() method");
-    validators.unshift(validator);
-  }
+  if (!validator.identify) throw new Error("validator must have an identify() method");
+  if (!validator.assert) throw new Error("validator must have an assert() method");
+  if (!validator.validate) throw new Error("validator must have a validate() method");
+  if (!validator.toJSON) throw new Error("validator must have a toJSON() method");
+  validators.unshift(validator);
+}
 
 function schemaToValidator (schema, extraValidators) {
     // set the default validators
@@ -28,6 +29,7 @@ function schemaToValidator (schema, extraValidators) {
     const validators = [
       SimpleNativeValidator,
       NumberValidator,
+      BooleanValidator,
       StringValidator,
       DateValidator,
       ArrayValidator,

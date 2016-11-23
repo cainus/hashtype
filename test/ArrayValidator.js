@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var ArrayValidator = require('../ArrayValidator');
+var liken = require('../index');
 
 const nonArrays = {
   someObj: {},
@@ -34,18 +35,19 @@ describe('ArrayValidator', function(){
 
     it ("returns true for arrays", function(){
       assert.isOk(ArrayValidator.identify([]));
+      assert.isOk(ArrayValidator.identify({'#array' : {}}));
       assert.isOk(ArrayValidator.identify([0,"asdf",false]));
     });
   });
   describe("#toJSON", function(){
     it ("returns JSON for an empty array", function(){
-      expect(new ArrayValidator([]).toJSON()).to.eql([]);
+      expect(new ArrayValidator([]).toJSON()).to.eql({'#array': {matches: []}});
     });
     it ("returns JSON for a 1 property array", function(){
-      expect(new ArrayValidator(["test"]).toJSON()).to.eql(["test"]);
+      expect(new ArrayValidator(["test"]).toJSON()).to.eql({'#array': {matches: ["test"]}});
     });
     it ("returns JSON for a 2 property array", function(){
-      expect(new ArrayValidator(["test", 1]).toJSON()).to.eql(["test", 1]);
+      expect(new ArrayValidator(["test", 1]).toJSON()).to.eql({'#array': {matches: ["test", 1]}});
     });
   });
 
@@ -67,8 +69,35 @@ describe('ArrayValidator', function(){
     it ('can match any array', function(){
       check(Array, [0, "asdf", false]);
     });
+    describe("#ofAll", function(){
+      it ('can match an array of a certain type', function(){
+        check({'#array': {'ofAll': Number}}, [0, 1, 2]);
+      });
+      it ('can match an array of a certain type using ArrayNotation', function(){
+        check(liken.array().ofAll(Number), [0, 1, 2]);
+      });
+    });
+    describe("#length", function(){
+      it ('can match an array of a given length', function(){
+        check({'#array': {'length': 3}}, [2, 1, 0]);
+      });
+      it ('can match an array of any order using ArrayNotation', function(){
+        check(liken.array().length(3), [2, 1, 0]);
+      });
+      it ('rejects arrays of incorrect length using ArrayNotation', function(){
+        var expected = liken.array().length(3);
+        var underTest = [2,1];
+        var error = getError(expected, underTest);
+        expect(error.expected).to.eql(expected);
+        expect(error.actual).to.eql(underTest);
+        expect(error.errors).to.have.length(1);
+        expect(error.errors[0].message).to.eql('InvalidLength');
+        expect(error.errors[0].actual).to.eql(2);
+        expect(error.errors[0].expected).to.eql(3);
+      });
+    });
     it ('throws on non-matching object properties', function(){
-      var expected = ["asdf", true];
+      var expected = {'#array': { matches : ["asdf", true]}};
       var underTest = ["asdf", false];
       var error = getError(expected, underTest);
       expect(error.expected).to.eql(expected);
@@ -80,7 +109,7 @@ describe('ArrayValidator', function(){
       expect(error.errors[0].expected).to.eql(true);
     });
     it ('throws on non-matching sub-object properties', function(){
-      var expected = ["asdf", {isSub:true}];
+      var expected = {'#array': { matches : ["asdf", {isSub:true}]}};
       var underTest = ["asdf", {isSub:false}];
       var error = getError(expected, underTest);
       expect(error.expected).to.eql(expected);
@@ -97,7 +126,7 @@ describe('ArrayValidator', function(){
       check(expected, underTest);
     });
     it ('errors for excess items', function(){
-      var expected = [];
+      var expected = {'#array': { matches : []}};
       var underTest = ["value"];
       var error = getError(expected, underTest);
       expect(error.expected).to.eql(expected);
@@ -108,8 +137,8 @@ describe('ArrayValidator', function(){
       expect(error.errors[0].expected).to.eql(null);
     });
     it ('errors for missing items', function(){
+      var expected = {'#array': { matches : ["value"]}};
       var underTest = [];
-      var expected = ["value"];
       var error = getError(expected, underTest);
       expect(error.expected).to.eql(expected);
       expect(error.actual).to.eql(underTest);

@@ -1,6 +1,15 @@
 
 var error = {};
 
+error.InvalidLength = function(actual, expected, key){
+  const err = new Error('InvalidLength');
+  err.expected = expected;
+  err.actual = actual;
+  if (key != null){
+    err.key = key;
+  }
+  return err;
+};
 
 error.MismatchedValue = function(actual, expected, key){
   const err = new Error('MismatchedValue');

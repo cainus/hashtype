@@ -1,4 +1,5 @@
 const schemaToValidator = require('./schemaToValidator');
+const ArrayNotation = require('./ArrayNotation');
 
 class DateNotation {
   constructor () {
@@ -77,6 +78,10 @@ factory.oneOf = function(){
   return {
     '#oneOf': args
   };
+};
+
+factory.array = function(arr){
+  return new ArrayNotation(arr);
 };
 
 module.exports = factory;

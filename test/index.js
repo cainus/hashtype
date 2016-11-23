@@ -150,26 +150,33 @@ describe('liken (index.js)', function(){
       expect(ex.errors[0].actual).to.eql("42");
     });
     it ('matches some stuff', function(){
-      liken(
-        {
-        firstName: "Mickey",
-        fingerCount:10,
-        //employed:true,
-        alphabet: 'asdfsadf',
-        literally:"literally",
-        someEnum: "literal",
-        //typedArray:[4,5,6,7,8],
-        list:[1,2,3,4]
-      }, {
-        firstName: String,
-        fingerCount: Number,
-        //employed: Boolean,
-        alphabet: /^[a-z]+$/,
-        literally: "literally",
-        someEnum: liken.oneOf(Number, "literal"),
-        //typedArray: [Number],
-        list: Array
-      });
+      const NumberArray = liken.array().ofAll(Number);
+      try {
+        liken(
+          {
+          firstName: "Mickey",
+          fingerCount:10,
+          employed:true,
+          alphabet: 'asdfsadf',
+          literally:"literally",
+          someEnum: "literal",
+          typedArray:[4,5,6,7,8],
+          list:[1,2,3,4]
+        }, {
+          firstName: String,
+          fingerCount: Number,
+          employed: Boolean,
+          alphabet: /^[a-z]+$/,
+          literally: "literally",
+          someEnum: liken.oneOf(Number, "literal"),
+          typedArray: NumberArray,
+          list: Array
+        });
+      } catch (ex) {
+        // should never get here
+        // console.log("errors[0]: ", ex.errors[0]);
+        throw ex;
+      }
     });
     it ('returns true when an optional parameter is missing', function(){
       const optional = liken.optional;
@@ -179,7 +186,7 @@ describe('liken (index.js)', function(){
         firstName: String,
         lastName: optional(String),
         fingerCount: optional(Number),
-  //      employed: optional(Boolean),
+        employed: optional(Boolean),
         alphabet: optional(/^[a-z]+$/),
         literally: optional("literally"),
         maybeEnum: optional(liken.oneOf(Number, String)),
@@ -203,6 +210,3 @@ describe('liken (index.js)', function(){
     });
   });
 });
-
-// TODO typed arrays
-// type("array", String), type("any"), type("array"

@@ -19,7 +19,7 @@ describe('liken literals', function(){
     it ('errors for excess items', function(){
       var error = getError(["asdf"], []);
       expect(error.message).to.eql("MismatchedValue");
-      expect(error.expected).to.eql([]);
+      expect(error.expected).to.eql({'#array' : {matches: []}});
       expect(error.actual).to.eql(["asdf"]);
       expect(error.errors).to.have.length(1);
       var subError = error.errors[0];
@@ -30,7 +30,7 @@ describe('liken literals', function(){
     it ('errors for missing items', function(){
       var error = getError([], ["asdf"]);
       expect(error.message).to.eql("MismatchedValue");
-      expect(error.expected).to.eql(["asdf"]);
+      expect(error.expected).to.eql({'#array' : {matches: ["asdf"]}});
       expect(error.actual).to.eql([]);
       expect(error.errors).to.have.length(1);
       var subError = error.errors[0];

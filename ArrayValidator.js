@@ -3,15 +3,44 @@ const error = require('./error');
 
 class ArrayValidator {
   constructor (schema) {
+    const allowedOptions = [
+      'matches',
+      'ofAll',
+      'containing',
+      'length'
+    ];
+    this.schema = {};
+    // NB: DO NOT MUTATE schema argument
     if (!ArrayValidator.identify(schema)){
       throw new Error("Invalid schema for validator");
     }
-    if (schema === Array){
-      this.schema = {'#array': {}};
+    if (schema === Array || !schema){
+      return;
+    }
+    if (Array.isArray(schema)){
+      this.schema.matches = schema.slice();
     } else {
-      this.schema = schema.map(function(item){
+      // translate #array children up to the root
+      allowedOptions.forEach((prop) => {
+        if (schema['#array']){
+          if (typeof schema['#array'][prop] !== 'undefined'){
+            this.schema[prop] = schema['#array'][prop];
+          }
+        } else {
+          if (typeof schema[prop] !== 'undefined'){
+            this.schema[prop] = schema[prop];
+          }
+        }
+      });
+    }
+    // translate sub values to schemas too
+    if (this.schema.matches){
+      this.schema.matches = this.schema.matches.map(function(item){
         return schemaToValidator(item);
       });
+    }
+    if (this.schema.ofAll){
+      this.schema.ofAll = schemaToValidator(this.schema.ofAll);
     }
   }
 
@@ -28,35 +57,54 @@ class ArrayValidator {
     if (!Array.isArray(input)){
       throw error.MismatchedValue(input, this.toJSON());
     }
-    if (this.schema['#array']){
-      return;
-    }
+    const schema = this.schema;
     const errors = [];
     var tested = [];
-    const schema = this.schema;
-    input.forEach(function(item, key){
-      tested.push(key);
-      if (schema[key] == null){
-        const err = error.UnexpectedValue(item, key);
-        errors.push(err);
-      } else {
+
+    if (schema.ofAll){
+      input.forEach(function(item, key){
         try {
-          schema[key].assert(item);
+          schema.ofAll.assert(item);
         } catch (ex) {
           ex.key = key;
           errors.push(ex);
         }
-      }
-    });
+      });
+    }
 
-    // get the diff between tested and the keys of schema.
-    // those are the missing key / values on input
-    schema.forEach(function(item, key){
-      if (!tested.includes(key)){
-        const err = error.MissingValue(schema[key].toJSON(), key);
+    if (schema.length || schema.length === 0){
+      if (input.length !== schema.length){
+        const err = error.InvalidLength(input.length, schema.length);
         errors.push(err);
       }
-    });
+    }
+
+    if (schema.matches){
+      const matches = schema.matches;
+      input.forEach(function(item, key){
+        tested.push(key);
+        if (matches[key] == null){
+          const err = error.UnexpectedValue(item, key);
+          errors.push(err);
+        } else {
+          try {
+            matches[key].assert(item);
+          } catch (ex) {
+            ex.key = key;
+            errors.push(ex);
+          }
+        }
+      });
+
+      // get the diff between tested and the keys of matches.
+      // those are the missing key / values on input
+      matches.forEach(function(item, key){
+        if (!tested.includes(key)){
+          const err = error.MissingValue(matches[key].toJSON(), key);
+          errors.push(err);
+        }
+      });
+    }
 
     if (errors.length > 0){
       const err = error.MismatchedValue(input, this.toJSON());
@@ -66,17 +114,27 @@ class ArrayValidator {
   }
 
   toJSON () {
-    if (this.schema['#array']){
-      return this.schema;
+    const schema = this.schema;
+    const json = {};
+    if (schema.matches){
+      json.matches = schema.matches.map(function(item){
+        return item.toJSON();
+      });
     }
-    const json = this.schema.map(function(item){
-      return item.toJSON();
-    });
-    return json;
+    if (schema.length){
+      json.length = schema.length;
+    }
+    if (schema.ofAll){
+      json.ofAll = schema.ofAll;
+    }
+    return {'#array' : json};
   }
 
   static identify (schema) {
     if (schema === Array){
+      return true;
+    }
+    if (schema && schema['#array']){
       return true;
     }
     if (!Array.isArray(schema)){
