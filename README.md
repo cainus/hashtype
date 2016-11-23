@@ -130,7 +130,7 @@ liken({
 * can be extended to output other schema types (react proptypes,
   jsonschema, mongoose)
 * make error-messages as obvious as possible
-
+* keep the library dependency-free (except for test dependencies)
 
 ### Future Plans:
 * dates with precision options
