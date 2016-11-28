@@ -97,10 +97,32 @@ liken(
 ### Optionals (#optional())
 ```javascript
 liken({
+  test: "test"
+}, {
   test: "test",
   maybe: liken.optional(Number)
+);  // this passes
+```
+
+#### Objects
+```javascript
+liken({
+  works: true,
+  subObject: {
+    broken: false
+  },
+  keyPairs: {
+    key0: "this",
+    key1: "is",
+    key2: "an",
+    key3: "example",
+  }
 }, {
-  test: "test"
+  works: true,
+  subObject: {
+    broken: false
+  },
+  keyPairs: liken.object().keys(liken.array().ofAll(/^key/))
 );  // this passes
 ```
 

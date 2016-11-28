@@ -1,5 +1,6 @@
 const schemaToValidator = require('./schemaToValidator');
 const ArrayNotation = require('./ArrayNotation');
+const ObjectNotation = require('./ObjectNotation');
 
 class DateNotation {
   constructor () {
@@ -82,6 +83,10 @@ factory.oneOf = function(){
 
 factory.array = function(arr){
   return new ArrayNotation(arr);
+};
+
+factory.object = function(obj){
+  return new ObjectNotation(obj);
 };
 
 module.exports = factory;

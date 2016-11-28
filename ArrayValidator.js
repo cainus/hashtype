@@ -125,7 +125,7 @@ class ArrayValidator {
       json.length = schema.length;
     }
     if (schema.ofAll){
-      json.ofAll = schema.ofAll;
+      json.ofAll = schema.ofAll.toJSON();
     }
     return {'#array' : json};
   }

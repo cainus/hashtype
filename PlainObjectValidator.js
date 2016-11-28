@@ -6,9 +6,26 @@ class PlainObjectValidator {
     if (!PlainObjectValidator.identify(schema)){
       throw new Error("Invalid schema for validator");
     }
-    this.schema = {};
-    for (var x in schema){
-      this.schema[x] = schemaToValidator(schema[x]);
+    this.schema = null;
+    this.options = {};
+    let matches = null;
+    if (schema['#object']){
+      if (schema['#object'].keys){
+        this.options.keys = schemaToValidator(schema['#object'].keys);
+      }
+      if (schema['#object'].matches){
+        matches = schema['#object'].matches;
+      }
+    } else {
+      if (schema){
+        matches = schema;
+      }
+    }
+    if (matches){
+      this.schema = {};
+      for (var x in matches){
+        this.schema[x] = schemaToValidator(matches[x]);
+      }
     }
   }
 
@@ -23,28 +40,44 @@ class PlainObjectValidator {
 
   assert (input) {
     const errors = [];
-    var tested = [];
-    for(var key in this.schema){
-      tested.push(key);
-      try {
-        this.schema[key].assert(input[key]);
-      } catch (ex) {
-        let err = ex;
-        if (input[key] == null){
-          err = error.MissingValue(this.schema[key].toJSON(), key);
+
+    if (this.options){
+      if (this.options.keys){
+        const actualKeys = Object.keys(input);
+        try {
+          this.options.keys.assert(actualKeys);
+        } catch (ex) {
+          let err = ex;
+          err = error.InvalidKey(this.options.keys.toJSON(), actualKeys);
+          errors.push(err);
         }
-        err.key = key;
-        errors.push(err);
       }
     }
 
-    // get the diff between tested and the keys of input.
-    // those are the missing key / values on input
-    for (const name in input){
-      if (!tested.includes(name)){
-        //const err = error.MissingValue(this.schema[name].toJSON(), name);
-        const err = error.UnexpectedValue(input[name], name);
-        errors.push(err);
+    if (this.schema){
+      const tested = [];
+      for(var key in this.schema){
+        tested.push(key);
+        try {
+          this.schema[key].assert(input[key]);
+        } catch (ex) {
+          let err = ex;
+          if (input[key] == null){
+            err = error.MissingValue(this.schema[key].toJSON(), key);
+          }
+          err.key = key;
+          errors.push(err);
+        }
+      }
+
+      // get the diff between tested and the keys of input.
+      // those are the missing key / values on input
+      for (const name in input){
+        if (!tested.includes(name)){
+          //const err = error.MissingValue(this.schema[name].toJSON(), name);
+          const err = error.UnexpectedValue(input[name], name);
+          errors.push(err);
+        }
       }
     }
 
@@ -57,10 +90,18 @@ class PlainObjectValidator {
 
   toJSON () {
     const retval = {};
-    for (const x in this.schema){
-      retval[x] = this.schema[x].toJSON();
+    if (this.schema){
+      retval.matches = {};
+      for (const x in this.schema){
+        retval.matches[x] = this.schema[x].toJSON();
+      }
     }
-    return retval;
+    if (this.options){
+      for (var key in this.options){
+        retval[key] = this.options[key].toJSON();
+      }
+    }
+    return {'#object': retval};
   }
 
   static identify (schema) {

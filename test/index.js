@@ -83,7 +83,13 @@ describe('liken (index.js)', function(){
       expect(ex).to.be.an.instanceof(Error);
       expect(ex.message).to.eql('MismatchedValue');
       expect(ex.actual).to.eql({answers: '42'});
-      expect(ex.expected).to.eql({answers: {'#array': {}}});
+      expect(ex.expected).to.eql({
+        '#object': {
+          'matches': {
+            answers: {'#array': {}}
+          }
+        }
+      });
     });
     it ('errors when expecting a oneOf but get another type', function(){
       var ex = raise(function(){
@@ -96,10 +102,16 @@ describe('liken (index.js)', function(){
       expect(ex).to.be.an.instanceof(Error);
       expect(ex.message).to.eql('MismatchedValue');
       expect(ex.actual).to.eql({answers: true});
-      expect(ex.expected).to.eql({answers: {'#oneOf': [
-        {'#string': {}},
-        {'#number': {}},
-      ]}});
+      expect(ex.expected).to.eql({
+        '#object': {
+          matches: {
+            answers: {'#oneOf': [
+              {'#string': {}},
+              {'#number': {}},
+            ]
+          }
+        }
+      }});
     });
     it ('matches multiple schemas with oneOf', function(){
         liken({
@@ -132,7 +144,13 @@ describe('liken (index.js)', function(){
       });
       expect(ex.message).to.eql('MismatchedValue');
       expect(ex.actual).to.eql({answer: "42"});
-      expect(ex.expected).to.eql({answer: "yellow"});
+      expect(ex.expected).to.eql({
+        '#object': {
+          matches: {
+            answer: "yellow"
+          }
+        }
+      });
     });
     it ('errors when expecting a string matching a regex but gets another string', function(){
       var ex = raise(function(){

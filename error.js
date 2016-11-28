@@ -1,6 +1,16 @@
 
 var error = {};
 
+error.InvalidKey = function(actual, expected, key){
+  const err = new Error('InvalidKey');
+  err.expected = expected;
+  err.actual = actual;
+  if (key != null){
+    err.key = key;
+  }
+  return err;
+};
+
 error.InvalidLength = function(actual, expected, key){
   const err = new Error('InvalidLength');
   err.expected = expected;

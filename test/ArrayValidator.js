@@ -109,7 +109,20 @@ describe('ArrayValidator', function(){
       expect(error.errors[0].expected).to.eql(true);
     });
     it ('throws on non-matching sub-object properties', function(){
-      var expected = {'#array': { matches : ["asdf", {isSub:true}]}};
+      var obj = {
+        '#object' : {
+          matches : {
+            isSub:true
+          }
+        }
+      };
+      var expected = {
+        '#array': {
+          matches : [
+            "asdf", obj
+          ]
+        }
+      };
       var underTest = ["asdf", {isSub:false}];
       var error = getError(expected, underTest);
       expect(error.expected).to.eql(expected);
@@ -118,7 +131,7 @@ describe('ArrayValidator', function(){
       expect(error.errors[0].key).to.eql(1);
       expect(error.errors[0].message).to.eql('MismatchedValue');
       expect(error.errors[0].actual).to.eql({isSub:false});
-      expect(error.errors[0].expected).to.eql({isSub:true});
+      expect(error.errors[0].expected).to.eql(obj);
     });
     it ('allows matching sub-object regexes', function(){
       var expected = [{asdf:"asdf"}, {isSub: /true/}];

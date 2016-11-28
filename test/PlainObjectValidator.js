@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var PlainObjectValidator = require('../PlainObjectValidator');
+var liken = require('../index');
 
 describe('PlainObjectValidator', function(){
   describe('identify', function(){
@@ -36,22 +37,40 @@ describe('PlainObjectValidator', function(){
     it ("returns true for objects", function(){
       assert.isOk(PlainObjectValidator.identify({}));
       assert.isOk(PlainObjectValidator.identify({"asdf":false}));
+      assert.isOk(PlainObjectValidator.identify({"#object":{matches:{asdf:false}}}));
     });
   });
   describe("#toJSON", function(){
     it ("returns JSON for an empty object", function(){
-      expect(new PlainObjectValidator({}).toJSON()).to.eql({});
+      expect(new PlainObjectValidator({}).toJSON()).to.eql({
+        '#object' : {
+          matches: {
+          }
+        }
+      });
     });
     it ("returns JSON for a 1 property object", function(){
-      expect(new PlainObjectValidator({"asdf": true}).toJSON()).to.eql({"asdf": true});
+      expect(new PlainObjectValidator({
+        "asdf": true
+      }).toJSON()).to.eql({
+        '#object' : {
+          matches: {
+            "asdf": true
+          }
+        }
+      });
     });
     it ("returns JSON for a 2 property object", function(){
       expect(new PlainObjectValidator({
         "asdf": true,
         "qwer": "qwer"
       }).toJSON()).to.eql({
-        "asdf": true,
-        "qwer": "qwer"
+        '#object' : {
+          matches: {
+            "asdf": true,
+            "qwer": "qwer"
+          }
+        }
       });
     });
   });
@@ -81,7 +100,7 @@ describe('PlainObjectValidator', function(){
       var expected = {asdf:"asdf", sub:true};
       var underTest = {asdf:"asdf", sub:false};
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql({'#object': { matches: expected}});
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].message).to.eql('MismatchedValue');
@@ -93,19 +112,83 @@ describe('PlainObjectValidator', function(){
       var expected = {asdf:"asdf", sub:{isSub:true}};
       var underTest = {asdf:"asdf", sub:{isSub:false}};
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql({
+        '#object': {
+          matches: {
+            asdf: 'asdf',
+            sub: {
+              '#object': {
+                matches: {
+                  isSub: true
+                }
+              }
+            }
+          }
+        }
+      });
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql('sub');
       expect(error.errors[0].message).to.eql('MismatchedValue');
       expect(error.errors[0].actual).to.eql({isSub:false});
-      expect(error.errors[0].expected).to.eql({isSub:true});
+      expect(error.errors[0].expected).to.eql({
+        '#object': {
+          'matches': {
+            isSub:true
+          }
+        }
+      });
     });
+
+    describe("when object key matching", function(){
+      it ('allows matching with object properties', function(){
+        var expected = {'#object': {'keys': liken.array().ofAll(/^ke/)}};
+        var underTest = {"key1":"value", "key2":"value"};
+        check(expected, underTest);
+      });
+      it ('allows matching with object properties with notation class', function(){
+        var expected = liken.object().keys(liken.array().ofAll(/^ke/));
+        var underTest = {"key1":"value", "key2":"value"};
+        check(expected, underTest);
+      });
+      it ('errors for items with the wrong keys', function(){
+        var expected = {'#object': {'keys': liken.array().ofAll(/^ke/)}};
+        var underTest = {"key":"value", "another":"value"};
+        var error = getError(expected, underTest);
+        expect(error.expected).to.eql({
+          '#object': {
+            'keys': {
+              '#array': {
+                'ofAll': {
+                  '#string': {
+                    'matches': '/^ke/'
+                  }
+                }
+              }
+            }
+          }
+        });
+        expect(error.actual).to.eql(underTest);
+        expect(error.errors).to.have.length(1);
+        expect(error.errors[0].message).to.eql('InvalidKey');
+        expect(error.errors[0].actual).to.eql({
+          '#array': {
+            'ofAll': {
+              '#string': {
+                'matches': '/^ke/'
+              }
+            }
+          }
+        });
+        expect(error.errors[0].expected).to.eql(['key', 'another']);
+      });
+    });
+
     it ('errors for excess items', function(){
       var expected = {};
       var underTest = {"key":"value"};
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql({ '#object': { matches: expected}});
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql('key');
@@ -117,7 +200,7 @@ describe('PlainObjectValidator', function(){
       var underTest = {};
       var expected = {"key":"value"};
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql({ '#object': { matches: expected}});
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql('key');
