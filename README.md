@@ -132,7 +132,7 @@ liken({
     broken: false
   },
   keyPairs: liken.object().keys(liken.array().ofAll(/^key/)),
-  partial: like.object().contains({atLeast: true})
+  partial: liken.object().contains({atLeast: true})
 );  // this passes
 ```
 
