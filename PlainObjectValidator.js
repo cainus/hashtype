@@ -1,6 +1,46 @@
 const schemaToValidator = require('./schemaToValidator');
 const error = require('./error');
 
+
+function testObjectAgainstSchema (input, schema, options) {
+  // A schema here is a plain object, with schema objects as the values in it
+  // The options object can contain a boolean `partial` value to indicate if
+  // extra values are okay
+  const errors = [];
+  const tested = [];
+
+  options = options || {};
+  options.partial = options.partial || false;
+
+  for(const key in schema){
+    tested.push(key);
+    try {
+      schema[key].assert(input[key]);
+    } catch (ex) {
+      let err = ex;
+      if (input[key] == null){
+        err = error.MissingValue(schema[key].toJSON(), key);
+      }
+      err.key = key;
+      errors.push(err);
+    }
+  }
+
+  if (!options.partial){
+    // get the diff between tested and the keys of input.
+    // those are the unexpected key / values on input
+    for (const name in input){
+      if (!tested.includes(name)){
+        const err = error.UnexpectedValue(input[name], name);
+        errors.push(err);
+      }
+    }
+  }
+
+  return errors;
+}
+
+
 class PlainObjectValidator {
   constructor (schema) {
     if (!PlainObjectValidator.identify(schema)){
@@ -8,10 +48,21 @@ class PlainObjectValidator {
     }
     this.schema = null;
     this.options = {};
+    if (schema === Object){
+      // no criteria for matching.  Any object works
+      return;
+    }
     let matches = null;
     if (schema['#object']){
       if (schema['#object'].keys){
         this.options.keys = schemaToValidator(schema['#object'].keys);
+      }
+      if (schema['#object'].contains){
+        const contains = schema['#object'].contains;
+        this.options.contains = {};
+        for (const x in contains){
+          this.options.contains[x] = schemaToValidator(contains[x]);
+        }
       }
       if (schema['#object'].matches){
         matches = schema['#object'].matches;
@@ -23,7 +74,7 @@ class PlainObjectValidator {
     }
     if (matches){
       this.schema = {};
-      for (var x in matches){
+      for (const x in matches){
         this.schema[x] = schemaToValidator(matches[x]);
       }
     }
@@ -39,9 +90,10 @@ class PlainObjectValidator {
   }
 
   assert (input) {
-    const errors = [];
+    let errors = [];
 
     if (this.options){
+
       if (this.options.keys){
         const actualKeys = Object.keys(input);
         try {
@@ -52,32 +104,20 @@ class PlainObjectValidator {
           errors.push(err);
         }
       }
-    }
 
-    if (this.schema){
-      const tested = [];
-      for(var key in this.schema){
-        tested.push(key);
-        try {
-          this.schema[key].assert(input[key]);
-        } catch (ex) {
-          let err = ex;
-          if (input[key] == null){
-            err = error.MissingValue(this.schema[key].toJSON(), key);
-          }
-          err.key = key;
-          errors.push(err);
+      if (this.options.contains){
+        const schemaErrors = testObjectAgainstSchema(input, this.options.contains, {partial: true});
+        if (schemaErrors.length){
+          errors = errors.concat(schemaErrors);
         }
       }
 
-      // get the diff between tested and the keys of input.
-      // those are the missing key / values on input
-      for (const name in input){
-        if (!tested.includes(name)){
-          //const err = error.MissingValue(this.schema[name].toJSON(), name);
-          const err = error.UnexpectedValue(input[name], name);
-          errors.push(err);
-        }
+    }
+
+    if (this.schema){
+      const schemaErrors = testObjectAgainstSchema(input, this.schema);
+      if (schemaErrors.length){
+        errors = errors.concat(schemaErrors);
       }
     }
 
@@ -97,8 +137,14 @@ class PlainObjectValidator {
       }
     }
     if (this.options){
-      for (var key in this.options){
-        retval[key] = this.options[key].toJSON();
+      if (this.options.keys){
+        retval.keys = this.options.keys.toJSON();
+      }
+      if (this.options.contains){
+        retval.contains = {};
+        for (const x in this.options.contains){
+          retval.contains[x] = this.options.contains[x].toJSON();
+        }
       }
     }
     return {'#object': retval};
@@ -108,6 +154,9 @@ class PlainObjectValidator {
     // pretty incomplete, but good enough for now
     if (schema == null){
       return false;
+    }
+    if (schema === Object){
+      return true;
     }
     var type = typeof schema;
     if (type !== 'object'){

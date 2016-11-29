@@ -9,7 +9,10 @@ const StringValidator = require('./StringValidator');
 const DateValidator = require('./DateValidator');
 const NumberValidator = require('./NumberValidator');
 const BooleanValidator = require('./BooleanValidator');
+const AnyValidator = require('./AnyValidator');
 const consoleError = global[`consol${""}e`][`erro${""}r`]; // fool the linter
+
+
 
 // add a validator to the top of the validator stack
 function register (validator, validators) {
@@ -35,6 +38,7 @@ function schemaToValidator (schema, extraValidators) {
       ArrayValidator,
       OneOfValidator,
       OptionalValidator,
+      AnyValidator,
       PlainObjectValidator, // this must come last in case the others use an
                             // object notation
     ];

@@ -107,6 +107,10 @@ liken({
 #### Objects
 ```javascript
 liken({
+  whatever: {
+    matchEverything: "sure",
+    why: "not"
+  }
   works: true,
   subObject: {
     broken: false
@@ -116,13 +120,19 @@ liken({
     key1: "is",
     key2: "an",
     key3: "example",
+  },
+  partial: {
+    atLeast: true,
+    butMaybeAlso: true
   }
 }, {
+  whatever: Object,
   works: true,
   subObject: {
     broken: false
   },
-  keyPairs: liken.object().keys(liken.array().ofAll(/^key/))
+  keyPairs: liken.object().keys(liken.array().ofAll(/^key/)),
+  partial: like.object().contains({atLeast: true})
 );  // this passes
 ```
 
@@ -140,6 +150,15 @@ liken({
   literal: [4,5,6]
   withlength: liken.array().length(2)
 );  // this passes
+```
+
+#### Anything / Everything (#any())
+```javascript
+liken({
+  tryThis: {test: true}
+}, {
+  tryThis: liken.any()
+}); // this passes
 ```
 
 
@@ -160,14 +179,13 @@ liken({
 * dates with after options
 * user-defined validators
 * any array with segment (slice)
-* any object
-* objects with additional props
 * any function
-* any value at all
 
 ### Design Choices:
 * Notations are always JSON serializable so that they are
   over-the-wire serializable and easy to parse. (eg, no functions)
+* Notations all have a chainable interface, always using functions for
+  consistency and configurability.
 * All "types" have a notation that is an object with the type (preceded
   by a hash, all lower-case) as its first key and an options object for a value.  (eg {"#boolean": {}} , which is for the Boolean type, with an empty options object).
 * There is no pre-processing of input.  Only-validation.

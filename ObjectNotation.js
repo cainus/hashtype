@@ -16,6 +16,11 @@ class ObjectNotation {
     return this;
   }
 
+  contains (input) {
+    this['#object'].contains = input;
+    return this;
+  }
+
   toObject () {
     return { '#object' : this['#object'] };
   }

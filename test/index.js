@@ -125,6 +125,13 @@ describe('liken (index.js)', function(){
           answers: liken.oneOf(String, Number)
         });
     });
+    it ('matches anything with liken.any()', function(){
+      liken({
+        answer: true
+      },
+        liken.any()
+      );
+    });
     it ('matches dates', function(){
       var date = new Date();
       var copiedDate = new Date(date.getTime());

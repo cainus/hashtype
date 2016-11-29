@@ -87,6 +87,12 @@ describe('PlainObjectValidator', function(){
       }
       throw new Error('expected error was not raised');
     };
+    it ('matches any old object', function(){
+      check(Object, {
+        asdf:"asdf",
+        sub:{isSub:true}
+      });
+    });
     it ('allows matching with object properties', function(){
       check({
         asdf:"asdf",
@@ -181,6 +187,26 @@ describe('PlainObjectValidator', function(){
           }
         });
         expect(error.errors[0].expected).to.eql(['key', 'another']);
+      });
+    });
+
+    describe("#contains", function(){
+      it ('does not error for excess items', function(){
+        var expected = liken.object().contains({"key": "value"});
+        var underTest = {"key":"value", "anotherkey":"anothervalue"};
+        check(expected, underTest);
+      });
+      it ('errors for missing items', function(){
+        var expected = liken.object().contains({"key": "value"});
+        var underTest = {"anotherkey":"anothervalue"};
+        var error = getError(expected, underTest);
+        expect(error.expected).to.eql({ '#object': { contains: {key: 'value'}}});
+        expect(error.actual).to.eql(underTest);
+        expect(error.errors).to.have.length(1);
+        expect(error.errors[0].key).to.eql('key');
+        expect(error.errors[0].message).to.eql('MissingValue');
+        expect(error.errors[0].actual).to.eql(null);
+        expect(error.errors[0].expected).to.eql("value");
       });
     });
 

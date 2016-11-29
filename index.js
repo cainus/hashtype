@@ -89,4 +89,8 @@ factory.object = function(obj){
   return new ObjectNotation(obj);
 };
 
+factory.any = function () {
+  return {'#any': {}};
+};
+
 module.exports = factory;
