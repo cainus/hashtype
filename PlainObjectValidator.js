@@ -1,5 +1,6 @@
 const schemaToValidator = require('./schemaToValidator');
 const error = require('./error');
+const InvalidKey = error.InvalidKey;
 
 
 function testObjectAgainstSchema (input, schema, options) {
@@ -99,9 +100,15 @@ class PlainObjectValidator {
         try {
           this.options.keys.assert(actualKeys);
         } catch (ex) {
-          let err = ex;
-          err = error.InvalidKey(this.options.keys.toJSON(), actualKeys);
-          errors.push(err);
+          ex.errors.forEach(function(subError){
+            errors.push(
+              InvalidKey(
+                subError.actual,
+                subError.expected,
+                subError.actual
+              )
+            );
+          });
         }
       }
 
@@ -122,7 +129,8 @@ class PlainObjectValidator {
     }
 
     if (errors.length > 0){
-      const err = error.MismatchedValue(input, this.toJSON());
+      const expected = betterExpected(input, errors);
+      const err = error.MismatchedValue(input, expected);
       err.errors = errors;
       throw err;
     }
@@ -179,7 +187,52 @@ class PlainObjectValidator {
     }
     return true;
   }
+
+
 }
 
+/*
+
+ Takes an actual value and an error list and creates an expected object
+ that mirrors the actual value in all ways except for the error cases,
+ in which case the appropriate part of the schema is substituted.
+
+ This creates better "expected" values than just spitting out the entire
+ schema, because a differ can just highlight the broken parts.
+
+*/
+function betterExpected(actual, errors) {
+  const expected = {};
+  for (const key in actual){
+    expected[key] = actual[key];
+  }
+  let invalidKeyError = null;
+  errors.forEach(function(error){
+    if (error.key){
+      switch(true){
+        case error.InvalidKey:
+          invalidKeyError = error;
+          break;
+        case error.MissingValue:
+          expected[error.key] = error.expected;
+          break;
+        case error.UnexpectedValue:
+          delete expected[error.key];
+          break;
+        case error.MismatchedValue:
+          expected[error.key] = error.expected;
+          break;
+        default:
+          throw new Error("unknown error type");
+          //expected[error.key] = error.expected;
+      }
+    }
+  });
+  if (invalidKeyError){
+    delete expected[invalidKeyError.actual];
+    expected.LikenErrors = [invalidKeyError];
+  }
+  return expected;
+}
 
 module.exports = PlainObjectValidator;

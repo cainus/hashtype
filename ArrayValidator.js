@@ -107,7 +107,8 @@ class ArrayValidator {
     }
 
     if (errors.length > 0){
-      const err = error.MismatchedValue(input, this.toJSON());
+      const expected = betterExpected(input, errors);
+      const err = error.MismatchedValue(input, expected);
       err.errors = errors;
       throw err;
     }
@@ -142,6 +143,56 @@ class ArrayValidator {
     }
     return true;
   }
+}
+
+
+/*
+
+ Takes an actual value and an error list and creates an expected object
+ that mirrors the actual value in all ways except for the error cases,
+ in which case the appropriate part of the schema is substituted.
+
+ This creates better "expected" values than just spitting out the entire
+ schema, because a differ can just highlight the broken parts.
+
+*/
+function betterExpected(actual, errors) {
+  const expected = actual.slice();
+  const extraItemIndices = [];
+  let invalidLengthError = null;
+  errors.forEach(function(error, idx){
+    switch(true){
+      case error.UnexpectedValue:
+        extraItemIndices.push(idx);
+        break;
+      case error.MissingValue:
+        expected[error.key] = error.expected;
+        break;
+      case error.InvalidLength:
+        invalidLengthError = error;
+        break;
+      case error.MismatchedValue:
+        if (error.key){
+          expected[error.key] = error.expected;
+        } else {
+          throw new Error("no key for mismatch error");
+        }
+        break;
+      default:
+        throw new Error('unknown error type');
+    }
+  });
+  const retval = [];
+  expected.forEach(function(item, idx){
+    if (!extraItemIndices.includes(idx)){
+      retval.push(item);
+    }
+  });
+  if (invalidLengthError){
+    retval.push({"LikenErrors": [invalidLengthError]});
+  }
+  //console.log("returning: ", expected);
+  return retval;
 }
 
 

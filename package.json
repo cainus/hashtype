@@ -1,6 +1,6 @@
 {
   "name": "liken",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "javascript object matcher",
   "main": "index.js",
   "scripts": {
@@ -25,13 +25,12 @@
     "url": "https://github.com/cainus/liken/issues"
   },
   "homepage": "https://github.com/cainus/liken#readme",
-  "dependencies": {
+  "devDependencies": {
     "chai": "3.5.0",
     "deep-equal": "1.0.1",
     "difflet": "1.0.1",
     "eslint": "3.7.1",
     "json-stable-stringify": "1.0.1",
-    "lodash": "4.16.4",
     "mocha": "2.5.3",
     "traverse": "0.6.6"
   }

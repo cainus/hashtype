@@ -88,7 +88,11 @@ describe('ArrayValidator', function(){
         var expected = liken.array().length(3);
         var underTest = [2,1];
         var error = getError(expected, underTest);
-        expect(error.expected).to.eql(expected);
+        //console.log("error was: ", error);
+        //console.log("actual was: ", underTest);
+        //console.log("expected was: ", error.expected);
+        //console.log("expected should be: ", expected);
+        expect(error.expected).to.eql([2,1, {LikenErrors: [error.errors[0]]}]);
         expect(error.actual).to.eql(underTest);
         expect(error.errors).to.have.length(1);
         expect(error.errors[0].message).to.eql('InvalidLength');
@@ -100,7 +104,7 @@ describe('ArrayValidator', function(){
       var expected = {'#array': { matches : ["asdf", true]}};
       var underTest = ["asdf", false];
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql(["asdf", true]);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql(1);
@@ -125,13 +129,13 @@ describe('ArrayValidator', function(){
       };
       var underTest = ["asdf", {isSub:false}];
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql(['asdf', { isSub: true }]);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql(1);
       expect(error.errors[0].message).to.eql('MismatchedValue');
       expect(error.errors[0].actual).to.eql({isSub:false});
-      expect(error.errors[0].expected).to.eql(obj);
+      expect(error.errors[0].expected).to.eql({isSub:true});
     });
     it ('allows matching sub-object regexes', function(){
       var expected = [{asdf:"asdf"}, {isSub: /true/}];
@@ -142,7 +146,7 @@ describe('ArrayValidator', function(){
       var expected = {'#array': { matches : []}};
       var underTest = ["value"];
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql([]);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].message).to.eql('UnexpectedValue');
@@ -153,7 +157,7 @@ describe('ArrayValidator', function(){
       var expected = {'#array': { matches : ["value"]}};
       var underTest = [];
       var error = getError(expected, underTest);
-      expect(error.expected).to.eql(expected);
+      expect(error.expected).to.eql(["value"]);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].message).to.eql('MissingValue');
