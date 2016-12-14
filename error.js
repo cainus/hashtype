@@ -6,6 +6,20 @@ var AssertionError = function (message, actual, expected) {
   this.actual = actual;
   this.expected = expected;
   this.showDiff = true;
+
+  // capture stack trace
+  const ssf = arguments[`calle${"e"}`];
+  if (ssf && Error.captureStackTrace) {
+    Error.captureStackTrace(this, ssf);
+  } else {
+    try {
+      throw new Error();
+    } catch(e) {
+      this.stack = e.stack;
+    }
+  }
+
+
 };
 AssertionError.prototype = Object.create(Error.prototype);
 AssertionError.prototype.name = 'AssertionError';

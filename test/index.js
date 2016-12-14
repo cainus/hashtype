@@ -58,6 +58,24 @@ describe('liken (index.js)', function(){
       expect(ex.errors[0].actual).to.eql(1234);
       expect(ex.errors[0].expected).to.eql({'#string': {}});
     });
+    it ('errors when expecting a number but getting undefined', function(){
+      var ex = raise(function(){
+        liken(undefined, 42);
+      });
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue: expected undefined to match 42');
+      expect(ex.actual).to.eql(undefined);
+      expect(ex.expected).to.eql(42);
+    });
+    it ('errors when expecting a number but getting null', function(){
+      var ex = raise(function(){
+        liken(null, 42);
+      });
+      expect(ex).to.be.an.instanceof(Error);
+      expect(ex.message).to.eql('MismatchedValue: expected null to match 42');
+      expect(ex.actual).to.eql(null);
+      expect(ex.expected).to.eql(42);
+    });
     it ('errors when expecting a number but getting another type', function(){
       var ex = raise(function(){
         liken({

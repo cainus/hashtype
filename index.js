@@ -93,4 +93,17 @@ factory.any = function () {
   return {'#any': {}};
 };
 
+factory.log = function (actual, expected){
+  try {
+    factory(actual, expected);
+  } catch(ex) {
+    const log = global[`consol${"e"}`].error;
+    log(ex);
+    log("actual: ", ex.actual);
+    log("expected: ", ex.expected);
+    throw ex;
+  }
+  return null;
+};
+
 module.exports = factory;
