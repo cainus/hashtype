@@ -36,7 +36,7 @@ describe('SimpleNativeValidator', function(){
         new SimpleNativeValidator(null).assert(false);
         throw new Error("expected exception was not raised");
       } catch (ex) {
-        expect(ex.message).to.eql('MismatchedValue');
+        expect(ex.message).to.eql('MismatchedValue: expected false to match null');
         expect(ex.actual).to.eql(false);
         expect(ex.expected).to.eql(null);
       }
@@ -59,7 +59,7 @@ describe('SimpleNativeValidator', function(){
         new SimpleNativeValidator(true).assert(false);
         throw new Error("expected error didn't throw");
       } catch (err) {
-        expect(err.message).to.eql("MismatchedValue");
+        expect(err.message).to.eql("MismatchedValue: expected false to match true");
       }
     });
   });

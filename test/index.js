@@ -26,7 +26,7 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"firstName":42,"answer":"Test"} to match {"firstName":{"#string":{}},"answer":{"#number":{}}}');
       expect(ex.errors).to.have.length(2);
       expect(ex.errors[0].key).to.eql('firstName');
       expect(ex.errors[0].actual).to.eql(42);
@@ -41,9 +41,9 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {} to match {"firstName":{"#string":{}}}');
       expect(ex.errors).to.have.length(1);
-      expect(ex.errors[0].actual).to.eql(null);
+      expect(ex.errors[0].actual).to.eql(undefined);
       expect(ex.errors[0].expected).to.eql({'#string': {}});
     });
     it ('errors when expecting a string but getting another type', function(){
@@ -53,7 +53,7 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"firstName":1234} to match {"firstName":{"#string":{}}}');
       expect(ex.errors).to.have.length(1);
       expect(ex.errors[0].actual).to.eql(1234);
       expect(ex.errors[0].expected).to.eql({'#string': {}});
@@ -67,7 +67,7 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"answer":"42"} to match {"answer":{"#number":{}}}');
       expect(ex.errors).to.have.length(1);
       expect(ex.errors[0].actual).to.eql("42");
       expect(ex.errors[0].expected).to.eql({'#number': {}});
@@ -81,7 +81,7 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"answers":"42"} to match {"answers":{"#array":{}}}');
       expect(ex.actual).to.eql({answers: '42'});
       expect(ex.expected).to.eql({
         answers: {'#array': {}}
@@ -96,7 +96,7 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"answers":true} to match {"answers":{"#oneOf":[{"#string":{}},{"#number":{}}]}}');
       expect(ex.actual).to.eql({answers: true});
       expect(ex.expected).to.eql({
           answers: {'#oneOf': [
@@ -141,7 +141,7 @@ describe('liken (index.js)', function(){
           answer: "yellow"
         });
       });
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"answer":"42"} to match {"answer":"yellow"}');
       expect(ex.actual).to.eql({answer: "42"});
       expect(ex.expected).to.eql({
         answer: "yellow"
@@ -156,7 +156,7 @@ describe('liken (index.js)', function(){
         });
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue');
+      expect(ex.message).to.eql('MismatchedValue: expected {"answer":"42"} to match {"answer":{"#string":{"matches":"/^[a-z]+$/"}}}');
       expect(ex.errors).to.have.length(1);
       expect(ex.errors[0].key).to.eql('answer');
       expect(ex.errors[0].expected).to.eql({"#string":{"matches":"/^[a-z]+$/"}});

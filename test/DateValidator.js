@@ -102,7 +102,7 @@ describe('DateValidator', function(){
       var expected = new Date();
       var underTest = new Date(1975);
       var error = getError(underTest, expected);
-      expect(error.message).to.eql('MismatchedValue');
+      expect(error.message).to.eql('MismatchedValue: expected {"#date":"1970-01-01T00:00:01.975Z"} to match {"#date":{"equals":"' + expected.toISOString() + '"}}');
       expect(error.expected).to.eql({'#date': { equals: expected.toISOString() }});
       expect(error.actual).to.eql({'#date': underTest.toISOString()});
     });

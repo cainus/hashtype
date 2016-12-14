@@ -64,9 +64,9 @@ function expectMissingParamToThrow(schema){
   });
 }
 
-function expectValueErrorToThrow(schema, wrongType){
+function expectValueErrorToThrow(schema, wrongType, notation){
   var error = getError(wrongType, schema);
-  expect(error.message).to.eql('MismatchedValue');
+  expect(error.message).to.eql('MismatchedValue: expected ' + JSON.stringify(wrongType) + ' to match ' + JSON.stringify(notation || schema));
   expect(error.actual).to.eql(wrongType);
 }
 

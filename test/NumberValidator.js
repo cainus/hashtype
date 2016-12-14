@@ -97,7 +97,7 @@ describe('NumberValidator', function(){
       var expected = {'#number': {integer: true}};
       var underTest = 1975.45;
       var error = getError(underTest, expected);
-      expect(error.message).to.eql('MismatchedValue');
+      expect(error.message).to.eql('MismatchedValue: expected 1975.45 to match {"#number":{"integer":true}}');
       expect(error.expected).to.eql({'#number': { integer: true }});
       expect(error.actual).to.eql(underTest);
     });

@@ -117,7 +117,7 @@ describe('PlainObjectValidator', function(){
       expect(error.expected).to.eql(expected);
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
-      expect(error.errors[0].message).to.eql('MismatchedValue');
+      expect(error.errors[0].message).to.eql('MismatchedValue: expected false to match true');
       expect(error.errors[0].key).to.eql('sub');
       expect(error.errors[0].actual).to.eql(false);
       expect(error.errors[0].expected).to.eql(true);
@@ -135,7 +135,7 @@ describe('PlainObjectValidator', function(){
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql('sub');
-      expect(error.errors[0].message).to.eql('MismatchedValue');
+      expect(error.errors[0].message).to.eql('MismatchedValue: expected {"isSub":false} to match {"isSub":true}');
       expect(error.errors[0].actual).to.eql({isSub:false});
       expect(error.errors[0].expected).to.eql({
         isSub:true
@@ -164,7 +164,7 @@ describe('PlainObjectValidator', function(){
         });
         expect(error.actual).to.eql(underTest);
         expect(error.errors).to.have.length(1);
-        expect(error.errors[0].message).to.eql('InvalidKey');
+        expect(error.errors[0].message).to.eql('InvalidKey: expected "another" to match {"#string":{"matches":"/^ke/"}}');
         expect(error.errors[0].actual).to.eql('another');
         expect(error.errors[0].expected).to.eql({ '#string': { matches: '/^ke/' } });
       });
@@ -184,8 +184,8 @@ describe('PlainObjectValidator', function(){
         expect(error.actual).to.eql(underTest);
         expect(error.errors).to.have.length(1);
         expect(error.errors[0].key).to.eql('key');
-        expect(error.errors[0].message).to.eql('MissingValue');
-        expect(error.errors[0].actual).to.eql(null);
+        expect(error.errors[0].message).to.eql('MissingValue: expected "value" to exist at key "key"');
+        expect(error.errors[0].actual).to.eql(undefined);
         expect(error.errors[0].expected).to.eql("value");
       });
     });
@@ -198,9 +198,9 @@ describe('PlainObjectValidator', function(){
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql('key');
-      expect(error.errors[0].message).to.eql('UnexpectedValue');
+      expect(error.errors[0].message).to.eql('UnexpectedValue: did not expect "value" to exist at key "key"');
       expect(error.errors[0].actual).to.eql("value");
-      expect(error.errors[0].expected).to.eql(null);
+      expect(error.errors[0].expected).to.eql(undefined);
     });
     it ('errors for missing items', function(){
       var underTest = {};
@@ -210,8 +210,8 @@ describe('PlainObjectValidator', function(){
       expect(error.actual).to.eql(underTest);
       expect(error.errors).to.have.length(1);
       expect(error.errors[0].key).to.eql('key');
-      expect(error.errors[0].message).to.eql('MissingValue');
-      expect(error.errors[0].actual).to.eql(null);
+      expect(error.errors[0].message).to.eql('MissingValue: expected "value" to exist at key "key"');
+      expect(error.errors[0].actual).to.eql(undefined);
       expect(error.errors[0].expected).to.eql("value");
     });
     it ('works for all kinds of diffs', function(){
