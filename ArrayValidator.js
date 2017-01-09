@@ -172,11 +172,10 @@ function betterExpected(actual, errors) {
         invalidLengthError = error;
         break;
       case error.MismatchedValue:
-        if (error.key != null){
-          expected[error.key] = error.expected;
-        } else {
+        if (error.key == null){
           throw new Error("no key for mismatch error");
         }
+        expected[error.key] = error.expected;
         break;
       default:
         throw new Error('unknown error type');
