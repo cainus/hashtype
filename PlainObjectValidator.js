@@ -220,6 +220,7 @@ function betterExpected(actual, errors) {
           delete expected[error.key];
           break;
         case error.MismatchedValue:
+        case error.MismatchedType:
           expected[error.key] = error.expected;
           break;
         default:

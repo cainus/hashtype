@@ -45,7 +45,24 @@ error.InvalidLength = function(actual, expected, key){
   return err;
 };
 
+error.MismatchedType = function(actual, expectedType, expected, key){
+  const err = new AssertionError(
+    `MismatchedType: expected ${JSON.stringify(actual)} (type ${typeName(actual)}) to be of type ${expectedType}`,
+    actual,
+    expected
+  );
+  err.MismatchedType = true;
+  if (key != null){
+    err.key = key;
+  }
+  return err;
+};
+
 error.MismatchedValue = function(actual, expected, key){
+  if (typeName(actual) !== typeName(expected)) {
+    return error.MismatchedType(actual, typeName(expected), expected, key);
+  }
+
   const err = new AssertionError(
     `MismatchedValue: expected ${JSON.stringify(actual)} to match ${JSON.stringify(expected)}`,
     actual,
@@ -71,5 +88,20 @@ error.UnexpectedValue = function(actual, key){
   err.key = key;
   return err;
 };
+
+function typeName (x) {
+  // if we have an object, it might be a JSON notation so we look for that first
+  if (x != null) {
+    const keys = Object.keys(x);
+    for (const key of keys) {
+      if (key[0] === "#") {
+        return key.slice(1);
+      }
+    }
+  }
+
+  return Object.prototype.toString.call(x).slice(8, -1).
+    toLowerCase();
+}
 
 module.exports = error;

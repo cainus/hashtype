@@ -172,6 +172,7 @@ function betterExpected(actual, errors) {
         invalidLengthError = error;
         break;
       case error.MismatchedValue:
+      case error.MismatchedType:
         if (error.key == null){
           throw new Error("no key for mismatch error");
         }
