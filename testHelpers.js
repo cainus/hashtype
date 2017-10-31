@@ -70,12 +70,10 @@ function expectValueErrorToThrow(schema, wrongType, notation){
   expect(error.actual).to.eql(wrongType);
 }
 
-
-function expectTypeMismatchToThrow(schema, wrongVal, expectedType, actualType){
-  var error = getError(wrongVal, schema);
-  expectProperties(error, {
-    subType: 'invalid type', path: null, value: wrongVal, expectedValue: schema, expectedType: expectedType, actualType: actualType
-  });
+function expectTypeMismatchToThrow(schema, wrongType, notation){
+  var error = getError(wrongType, schema);
+  expect(error.message).to.eql(`MismatchedType: expected ${JSON.stringify(wrongType)} (type ${typeName(wrongType)}) to be of type ${typeName(schema || notation)}`);
+  expect(error.actual).to.eql(wrongType);
 }
 
 var assertObjectEquals = function (actual, expected, options){
@@ -124,6 +122,21 @@ var assertObjectEquals = function (actual, expected, options){
   }
   return true;
 };
+
+function typeName (x) {
+  // if we have an object, it might be a JSON notation so we look for that first
+  if (x != null) {
+    const keys = Object.keys(x);
+    for (const key of keys) {
+      if (key[0] === "#") {
+        return key.slice(1);
+      }
+    }
+  }
+
+  return Object.prototype.toString.call(x).slice(8, -1).
+    toLowerCase();
+}
 
 module.exports = {
   expect,
