@@ -56,11 +56,11 @@ class StringValidator {
   assert (input) {
     const options = this.schema;
     if (!isString(input)){
-      throw error.MismatchedValue(input, this.toJSON());
+      throw new error.MismatchedValue(input, this.toJSON());
     }
     if (options.matches != null){
       if (!options.matches.test(input)){
-        throw error.MismatchedValue(input, this.toJSON());
+        throw new error.MismatchedValue(input, this.toJSON());
       }
     }
   }

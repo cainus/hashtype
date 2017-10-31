@@ -55,7 +55,7 @@ class ArrayValidator {
 
   assert (input) {
     if (!Array.isArray(input)){
-      throw error.MismatchedValue(input, this.toJSON());
+      throw new error.MismatchedValue(input, this.toJSON());
     }
     const schema = this.schema;
     const errors = [];
@@ -74,7 +74,7 @@ class ArrayValidator {
 
     if (schema.length || schema.length === 0){
       if (input.length !== schema.length){
-        const err = error.InvalidLength(input.length, schema.length);
+        const err = new error.InvalidLength(input.length, schema.length);
         errors.push(err);
       }
     }
@@ -84,7 +84,7 @@ class ArrayValidator {
       input.forEach(function(item, key){
         tested.push(key);
         if (matches[key] == null){
-          const err = error.UnexpectedValue(item, key);
+          const err = new error.UnexpectedValue(item, key);
           errors.push(err);
         } else {
           try {
@@ -100,7 +100,7 @@ class ArrayValidator {
       // those are the missing key / values on input
       matches.forEach(function(item, key){
         if (!tested.includes(key)){
-          const err = error.MissingValue(matches[key].toJSON(), key);
+          const err = new error.MissingValue(matches[key].toJSON(), key);
           errors.push(err);
         }
       });
@@ -108,7 +108,7 @@ class ArrayValidator {
 
     if (errors.length > 0){
       const expected = betterExpected(input, errors);
-      const err = error.MismatchedValue(input, expected);
+      const err = new error.MismatchedValue(input, expected);
       err.errors = errors;
       throw err;
     }

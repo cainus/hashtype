@@ -46,11 +46,11 @@ class NumberValidator {
   assert (input) {
     const options = this.schema;
     if (typeof input !== 'number'){
-      throw error.MismatchedValue(input, this.toJSON());
+      throw new error.MismatchedValue(input, this.toJSON());
     }
     if (options.integer === true){
       if (!Number.isInteger(input)){
-        throw error.MismatchedValue(input, this.toJSON());
+        throw new error.MismatchedValue(input, this.toJSON());
       }
     }
   }

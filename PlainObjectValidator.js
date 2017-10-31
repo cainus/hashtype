@@ -20,7 +20,7 @@ function testObjectAgainstSchema (input, schema, options) {
     } catch (ex) {
       let err = ex;
       if (input[key] == null){
-        err = error.MissingValue(schema[key].toJSON(), key);
+        err = new error.MissingValue(schema[key].toJSON(), key);
       }
       err.key = key;
       errors.push(err);
@@ -32,7 +32,7 @@ function testObjectAgainstSchema (input, schema, options) {
     // those are the unexpected key / values on input
     for (const name in input){
       if (!tested.includes(name)){
-        const err = error.UnexpectedValue(input[name], name);
+        const err = new error.UnexpectedValue(input[name], name);
         errors.push(err);
       }
     }
@@ -102,7 +102,7 @@ class PlainObjectValidator {
         } catch (ex) {
           ex.errors.forEach(function(subError){
             errors.push(
-              InvalidKey(
+              new InvalidKey(
                 subError.actual,
                 subError.expected,
                 subError.actual
@@ -130,7 +130,7 @@ class PlainObjectValidator {
 
     if (errors.length > 0){
       const expected = betterExpected(input, errors);
-      const err = error.MismatchedValue(input, expected);
+      const err = new error.MismatchedValue(input, expected);
       err.errors = errors;
       throw err;
     }

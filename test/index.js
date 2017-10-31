@@ -52,6 +52,9 @@ describe('liken (index.js)', function(){
           firstName: String
         });
       });
+      const firstFrame = ex.stack.split("\n").slice(1).
+        shift();
+      expect(firstFrame).to.include("liken/test/index");
       expect(ex).to.be.an.instanceof(Error);
       expect(ex.message).to.eql('MismatchedValue: expected {"firstName":1234} to match {"firstName":{"#string":{}}}');
       expect(ex.errors).to.have.length(1);
