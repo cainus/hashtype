@@ -1,13 +1,16 @@
-let factory;
+let stackTraceBoundary;
 
 class AssertionError extends Error {
   constructor (message, actual, expected) {
-    if (factory == null) factory = require("./");
     super(message);
     this.actual = actual;
     this.expected = expected;
     this.showDiff = true;
-    Error.captureStackTrace(this, factory);
+    Error.captureStackTrace(this, stackTraceBoundary);
+  }
+
+  static setStackTraceBoundary (fn) {
+    stackTraceBoundary = fn;
   }
 }
 AssertionError.prototype.name = 'AssertionError';
@@ -94,6 +97,7 @@ function typeName (x) {
 }
 
 module.exports = {
+  AssertionError,
   InvalidKey,
   InvalidLength,
   MismatchedType,
