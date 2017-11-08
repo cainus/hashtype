@@ -202,7 +202,14 @@ liken({
 
 
 
-
+### Similar Art:
+* [yup](https://github.com/jquense/yup)
+* [joi](https://github.com/hapijs/joi)
+* [react proptypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html)
+* [chaijs](http://chaijs.com/)
+* [expect.js](https://github.com/Automattic/expect.js)
+* [should.js](http://shouldjs.github.io/)
+* [rtypes](https://github.com/ericelliott/rtype)
 
 
 
