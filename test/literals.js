@@ -1,17 +1,19 @@
 var liken = require('../index');
 const testHelpers = require('../testHelpers');
 
-const expect = testHelpers.expect;
-const expectValueErrorToThrow = testHelpers.expectValueErrorToThrow;
-const getError = testHelpers.getError;
+const {
+  expect,
+  getError,
+  expectTypeMismatchToThrow,
+} = testHelpers;
 
 describe('liken literals', function(){
   describe("arrays of literals", function(){
     it ('throws error on wrong type', function(){
-      expectValueErrorToThrow([], 'asdf', {'#array':{"matches":[]}});
+      expectTypeMismatchToThrow([], 'asdf', {'#array':{"matches":[]}});
     });
     it ('throws value error on null', function(){
-      expectValueErrorToThrow([], null, {'#array':{"matches":[]}});
+      expectTypeMismatchToThrow([], null, {'#array':{"matches":[]}});
     });
     it ('allows matching values', function(){
       liken([], []);

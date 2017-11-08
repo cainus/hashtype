@@ -62,33 +62,33 @@ class DateValidator {
   assert (input) {
     const options = this.schema;
     if (!isValidDate(input)){
-      throw error.MismatchedValue(formatActual(input), this.toJSON());
+      throw new error.MismatchedValue(formatActual(input), this.toJSON());
     }
     if (options.equals != null){
       if (input.getTime() !== options.equals.getTime()){
-        throw error.MismatchedValue(formatActual(input), this.toJSON());
+        throw new error.MismatchedValue(formatActual(input), this.toJSON());
       }
     }
     if (options.recent != null){
       const tenSecondsAgo = new Date((new Date().getTime()) - (10 * 1000));
       if (options.recent === true){
         if (tenSecondsAgo > input){
-          throw error.MismatchedValue(formatActual(input), this.toJSON());
+          throw new error.MismatchedValue(formatActual(input), this.toJSON());
         }
       } else {
         if (tenSecondsAgo > input){
-          throw error.MismatchedValue(formatActual(input), this.toJSON());
+          throw new error.MismatchedValue(formatActual(input), this.toJSON());
         }
       }
     }
     if (options.before != null){
       if (input.getTime() >= options.before.getTime()){
-        throw error.MismatchedValue(formatActual(input), this.toJSON());
+        throw new error.MismatchedValue(formatActual(input), this.toJSON());
       }
     }
     if (options.after != null){
       if (input.getTime() <= options.after.getTime()){
-        throw error.MismatchedValue(formatActual(input), this.toJSON());
+        throw new error.MismatchedValue(formatActual(input), this.toJSON());
       }
     }
   }

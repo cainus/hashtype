@@ -4,13 +4,14 @@ const testHelpers = require('../testHelpers');
 
 const expect = testHelpers.expect;
 const expectValueErrorToThrow = testHelpers.expectValueErrorToThrow;
+const expectTypeMismatchToThrow = testHelpers.expectTypeMismatchToThrow;
 
 function testLiteral(schema, unmatched){
   it ('throws error on unmatched value', function(){
     expectValueErrorToThrow(schema, unmatched);
   });
   it ('throws missing error on null', function(){
-    expectValueErrorToThrow(schema, null);
+    expectTypeMismatchToThrow(schema, null);
   });
   it ("identifies simple natives", function(){
     expect(SimpleNativeValidator.identify(schema)).to.eql(true);
@@ -36,7 +37,7 @@ describe('SimpleNativeValidator', function(){
         new SimpleNativeValidator(null).assert(false);
         throw new Error("expected exception was not raised");
       } catch (ex) {
-        expect(ex.message).to.eql('MismatchedValue: expected false to match null');
+        expect(ex.message).to.eql('MismatchedType: expected false (type boolean) to be of type null');
         expect(ex.actual).to.eql(false);
         expect(ex.expected).to.eql(null);
       }

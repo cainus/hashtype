@@ -36,7 +36,7 @@ class BooleanValidator {
    **/
   assert (input) {
     if (typeof input !== 'boolean'){
-      throw error.MismatchedValue(input, this.toJSON());
+      throw new error.MismatchedValue(input, this.toJSON());
     }
   }
 

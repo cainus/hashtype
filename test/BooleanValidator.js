@@ -72,7 +72,7 @@ describe('BooleanValidator', function(){
       var expected = Boolean;
       var underTest = 14;
       var error = getError(underTest, expected);
-      expect(error.message).to.eql('MismatchedValue: expected 14 to match {"#boolean":{}}');
+      expect(error.message).to.eql('MismatchedType: expected 14 (type number) to be of type boolean');
       expect(error.expected).to.eql({'#boolean':{}});
       expect(error.actual).to.eql(14);
     });

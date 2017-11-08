@@ -37,7 +37,7 @@ class OneOfValidator {
    **/
   assert (input) {
     if (!this.validators.some((v) => v.validate(input))){
-      throw error.MismatchedValue(input, this.toJSON());
+      throw new error.MismatchedValue(input, this.toJSON());
     }
   }
 

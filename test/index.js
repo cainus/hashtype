@@ -4,6 +4,10 @@ const liken = require('../index');
 var expect = require('chai').expect;
 // TODO what about default values?!?
 
+// const {
+//   expectTypeMismatchToThrow,
+// } = require("../testHelpers");
+
 function raise(fn){
   try {
     fn();
@@ -52,6 +56,9 @@ describe('liken (index.js)', function(){
           firstName: String
         });
       });
+      const firstFrame = ex.stack.split("\n").slice(1).
+        shift();
+      expect(firstFrame).to.include("liken/test/index");
       expect(ex).to.be.an.instanceof(Error);
       expect(ex.message).to.eql('MismatchedValue: expected {"firstName":1234} to match {"firstName":{"#string":{}}}');
       expect(ex.errors).to.have.length(1);
@@ -63,7 +70,7 @@ describe('liken (index.js)', function(){
         liken(undefined, 42);
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue: expected undefined to match 42');
+      expect(ex.message).to.eql('MismatchedType: expected undefined (type undefined) to be of type number');
       expect(ex.actual).to.eql(undefined);
       expect(ex.expected).to.eql(42);
     });
@@ -72,7 +79,7 @@ describe('liken (index.js)', function(){
         liken(null, 42);
       });
       expect(ex).to.be.an.instanceof(Error);
-      expect(ex.message).to.eql('MismatchedValue: expected null to match 42');
+      expect(ex.message).to.eql('MismatchedType: expected null (type null) to be of type number');
       expect(ex.actual).to.eql(null);
       expect(ex.expected).to.eql(42);
     });

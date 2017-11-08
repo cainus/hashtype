@@ -1,6 +1,7 @@
 const schemaToValidator = require('./schemaToValidator');
 const ArrayNotation = require('./ArrayNotation');
 const ObjectNotation = require('./ObjectNotation');
+const {AssertionError} = require('./error');
 
 class DateNotation {
   constructor () {
@@ -105,5 +106,7 @@ factory.log = function (actual, expected){
   }
   return null;
 };
+
+AssertionError.setStackTraceBoundary(factory);
 
 module.exports = factory;

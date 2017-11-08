@@ -30,7 +30,7 @@ class SimpleNativeValidator {
    **/
   assert (input) {
     if (!this.validate(input)){
-      throw error.MismatchedValue(input, this.schema);
+      throw new error.MismatchedValue(input, this.schema);
     }
   }
 
