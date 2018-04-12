@@ -45,18 +45,8 @@ class SimpleNativeValidator {
    * returns true if this validator should be used.
    */
   static identify (schema) {
-    if (schema === null){
-      return true;
-    }
-    if (['number', 'boolean'].indexOf(typeof schema) !== -1){
-      return true;
-    }
-    if ((typeof schema === 'string') || (schema instanceof String)){
-      return true;
-    }
-    return false;
+    return Object(schema) !== schema;
   }
-
 }
 
 module.exports = SimpleNativeValidator;

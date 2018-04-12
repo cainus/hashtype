@@ -49,7 +49,7 @@ function schemaToValidator (schema, extraValidators) {
       });
     }
     // check the schema for the right validator
-    for (const validator of validators){
+    for (const validator of validators) {
       if (validator.identify(schema)){
         // return a matching validator for this schema
         const retval = new validator(schema);

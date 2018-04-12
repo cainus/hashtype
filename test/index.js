@@ -216,6 +216,9 @@ describe('liken (index.js)', function(){
         throw ex;
       }
     });
+    it ('handles undefined', function(){
+      liken({ asdf: undefined }, { asdf: undefined });
+    });
     it ('returns true when an optional parameter is missing', function(){
       const optional = liken.optional;
       liken({

@@ -18,7 +18,6 @@ class DateNotation {
       '#date': this['#date']
     };
   }
-
 }
 
 class NumberNotation {
