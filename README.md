@@ -124,7 +124,8 @@ liken({
   partial: {
     atLeast: true,
     butMaybeAlso: true
-  }
+  },
+  heterogenousArray: [{ a: 1 }, { a: true }, { a: "a" }]
 }, {
   whatever: Object,
   works: true,
@@ -133,6 +134,11 @@ liken({
   },
   keyPairs: liken.object().keys(liken.array().ofAll(/^key/)),
   partial: liken.object().contains({atLeast: true})
+  heterogenousArray: liken.array().ofAll(liken.oneOf(
+    liken.object().contains({ a: Number }),
+    liken.object().contains({ value: String }),
+    liken.object().contains({ value: Boolean })
+  ))
 );  // this passes
 ```
 
