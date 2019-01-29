@@ -141,6 +141,33 @@ describe('liken (index.js)', function(){
         }, {
           answers: liken.oneOf(String, Number)
         });
+
+        liken({
+          answers: { value: "xyz" },
+        }, {
+          answers: liken.oneOf(liken.object().contains({ value: String }), liken.object().contains({ value: Number }))
+        });
+
+        liken({
+          answers: { value: 120 },
+        }, {
+          answers: liken.oneOf(liken.object().contains({ value: String }), liken.object().contains({ value: Number }))
+        });
+
+        liken({
+          answers: [{ value: 120 }, { value: "one-twenty" }],
+        }, {
+          answers: liken.array().ofAll(liken.oneOf(liken.object().contains({ value: String }), liken.object().contains({ value: Number })))
+        });
+
+        const ex = raise(() => {
+          liken({
+            answers: { value: false },
+          }, {
+            answers: liken.oneOf(liken.object().contains({ value: String }), liken.object().contains({ value: Number }))
+          });
+        });
+        expect(ex.message).to.eql(`MismatchedValue: expected {"answers":{"value":false}} to match {"answers":{"#oneOf":[{"#object":{"contains":{"value":{"#string":{}}}}},{"#object":{"contains":{"value":{"#number":{}}}}}]}}`);
     });
     it ('matches anything with liken.any()', function(){
       liken({
